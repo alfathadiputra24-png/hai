@@ -1,0 +1,4255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Bite — Pesan Makanan Cepat &amp; Hangat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet" />
+  <!-- Google Identity Services & Sign in with Apple JS -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async defer></script>
+  <style>
+    /* =========================================================================
+       1. CSS VARIABLES & DESIGN TOKENS
+       ========================================================================= */
+    :root {
+      --color-primary: #9B0A0A;
+      --color-primary-dark: #780606;
+      --color-primary-soft: rgba(155, 10, 10, 0.08);
+      --color-accent: #FFB21A;
+      --color-accent-dark: #E89600;
+      --color-white: #FFFFFF;
+      --color-bg: #FFFFFF;
+      --color-input: #F2F2F2;
+      --color-text: #1B1B1B;
+      --color-text-muted: #757575;
+      --color-border: #ECECEC;
+      --color-success: #169C46;
+
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      --radius-pill: 999px;
+
+      --shadow-card: 0 10px 26px rgba(24, 10, 10, 0.07);
+      --shadow-nav: 0 14px 32px rgba(155, 10, 10, 0.34);
+      --shadow-float: 0 12px 24px rgba(0, 0, 0, 0.14);
+
+      --font-main: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --ease-spring: cubic-bezier(0.22, 1.28, 0.36, 1);
+      --ease-smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
+
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: var(--font-main);
+      color: var(--color-text);
+      background: var(--color-bg);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    button, input, textarea {
+      font-family: inherit;
+      border: none;
+      outline: none;
+      background: none;
+    }
+
+    button {
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    /* =========================================================================
+       2. DESKTOP IPHONE FRAME & VERTICAL STRIPED BACKGROUND
+       ========================================================================= */
+    .stage {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-primary);
+    }
+
+    .phone-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      background: var(--color-bg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-notch,
+    .phone-home-bar {
+      display: none;
+    }
+
+    @media (min-width: 520px) {
+      .stage {
+        padding: 20px;
+        background-color: #FFB21A;
+        background-image: repeating-linear-gradient(
+          90deg,
+          #FFB21A 0px,
+          #FFB21A 36px,
+          #FFA10A 36px,
+          #FFA10A 72px
+        );
+      }
+
+      .phone-frame {
+        width: 390px;
+        height: min(844px, calc(100vh - 40px));
+        border-radius: 48px;
+        border: 11px solid #161618;
+        box-shadow:
+          0 32px 70px rgba(84, 24, 0, 0.36),
+          0 0 0 2px #3A3A3F,
+          inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+        --safe-top: 26px;
+        --safe-bottom: 14px;
+      }
+
+      .phone-notch {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 112px;
+        height: 26px;
+        background: #161618;
+        border-radius: 999px;
+        z-index: 950;
+        pointer-events: none;
+      }
+
+      .phone-notch::after {
+        content: '';
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #23283A;
+        margin-left: 54px;
+        box-shadow: inset 0 0 2px rgba(255,255,255,0.25);
+      }
+
+      .phone-home-bar {
+        display: block;
+        position: absolute;
+        bottom: 7px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.22);
+        z-index: 950;
+        pointer-events: none;
+      }
+    }
+
+    /* =========================================================================
+       3. APP SHELL, SCREENS, HEADER & FLOATING PILL NAV
+       ========================================================================= */
+    .app-viewport {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--color-bg);
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--color-bg);
+      padding-top: var(--safe-top);
+      padding-bottom: calc(108px + var(--safe-bottom));
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(0, 14px, 0);
+      transition: opacity 0.26s var(--ease-smooth), transform 0.28s var(--ease-smooth);
+      scrollbar-width: none;
+    }
+
+    .screen::-webkit-scrollbar {
+      display: none;
+    }
+
+    .screen.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate3d(0, 0, 0);
+      z-index: 10;
+    }
+
+    .screen.no-nav-pad {
+      padding-bottom: calc(28px + var(--safe-bottom));
+    }
+
+    /* --- Splash Screen --- */
+    .splash-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 900;
+      background: radial-gradient(circle at 50% 35%, #B51111 0%, #9B0A0A 68%, #7E0606 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      will-change: transform, opacity;
+      transition: transform 0.65s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.5s ease;
+    }
+
+    .splash-screen.leaving {
+      transform: translate3d(0, -100%, 0);
+      pointer-events: none;
+    }
+
+    .splash-logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      transform: scale(0.72);
+      animation: splashLogoIn 0.65s var(--ease-spring) 0.12s forwards;
+    }
+
+    .splash-tagline {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUpSimple 0.45s ease 0.55s forwards;
+    }
+
+    .splash-swoosh-path {
+      stroke-dasharray: 240;
+      stroke-dashoffset: 240;
+      animation: drawStroke 0.72s cubic-bezier(0.35, 0, 0.2, 1) 0.35s forwards;
+    }
+
+    /* --- Header Beranda --- */
+    .home-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px 8px;
+      background: var(--color-white);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      transition: transform 0.45s var(--ease-spring), opacity 0.4s ease;
+    }
+
+    .home-header.enter-ready {
+      opacity: 0;
+      transform: translate3d(0, -24px, 0);
+    }
+
+    .home-header.entered {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--color-input);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text);
+      transition: transform 0.16s var(--ease-spring), background-color 0.2s ease;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.92);
+    }
+
+    .location-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      padding: 8px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+      max-width: 144px;
+      transition: transform 0.16s var(--ease-spring);
+    }
+
+    .location-pill span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .location-pill:active {
+      transform: scale(0.95);
+    }
+
+    /* --- Promo Carousel --- */
+    .promo-section {
+      padding: 8px 18px 12px;
+      overflow: hidden;
+    }
+
+    .promo-carousel {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(155, 10, 10, 0.18);
+      transform: translate3d(42px, 0, 0);
+      opacity: 0;
+      transition: transform 0.55s var(--ease-spring), opacity 0.45s ease;
+    }
+
+    .promo-carousel.entered {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+
+    .promo-track {
+      display: flex;
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    .promo-slide {
+      flex: 0 0 100%;
+      padding: 18px 20px;
+      min-height: 138px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      color: var(--color-white);
+    }
+
+    .promo-slide.theme-red {
+      background: linear-gradient(125deg, #9B0A0A 0%, #C81515 62%, #FF6B1A 100%);
+    }
+
+    .promo-slide.theme-gold {
+      background: linear-gradient(125deg, #FFB21A 0%, #FF8800 58%, #9B0A0A 100%);
+    }
+
+    .promo-slide.theme-dark {
+      background: linear-gradient(125deg, #700505 0%, #9B0A0A 55%, #FFB21A 100%);
+    }
+
+    .promo-badge-50 {
+      display: inline-block;
+      background: var(--color-accent);
+      color: #3C1100;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .promo-slide.theme-gold .promo-badge-50 {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .promo-text {
+      position: relative;
+      z-index: 2;
+      max-width: 64%;
+    }
+
+    .promo-title {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 4px;
+    }
+
+    .promo-sub {
+      font-size: 12px;
+      font-weight: 500;
+      opacity: 0.92;
+      line-height: 1.35;
+    }
+
+    .promo-big-percent {
+      position: relative;
+      z-index: 2;
+      font-size: 46px;
+      font-weight: 800;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.96);
+      text-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      letter-spacing: -0.04em;
+    }
+
+    .promo-circle-decor {
+      position: absolute;
+      right: -24px;
+      top: -28px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      pointer-events: none;
+    }
+
+    .promo-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .promo-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #DFDFDF;
+      transition: width 0.28s var(--ease-spring), background-color 0.25s ease;
+    }
+
+    .promo-dot.active {
+      width: 22px;
+      background: var(--color-primary);
+    }
+
+    /* --- Category Chips --- */
+    .category-wrap {
+      padding: 6px 18px 10px;
+    }
+
+    .category-scroll {
+      position: relative;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 6px;
+      scrollbar-width: none;
+    }
+
+    .category-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .category-indicator {
+      position: absolute;
+      top: 4px;
+      left: 0;
+      height: 38px;
+      border-radius: var(--radius-pill);
+      background: var(--color-primary);
+      box-shadow: 0 6px 14px rgba(155, 10, 10, 0.26);
+      transition: transform 0.34s var(--ease-spring), width 0.34s var(--ease-spring);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .cat-chip {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      height: 38px;
+      padding: 0 16px;
+      border-radius: var(--radius-pill);
+      background: var(--color-input);
+      color: var(--color-text);
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.24s ease, background-color 0.24s ease, transform 0.15s ease;
+    }
+
+    .cat-chip.active {
+      background: transparent;
+      color: var(--color-white);
+    }
+
+    .cat-chip:active {
+      transform: scale(0.95);
+    }
+
+    /* --- Section Heading --- */
+    .section-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 18px 10px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .section-count {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-text-muted);
+    }
+
+    /* --- Food Grid (2 Kolom) --- */
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      padding: 4px 18px 14px;
+      perspective: 900px;
+    }
+
+    .food-grid.grid-flipping {
+      animation: gridFlipFade 0.34s var(--ease-smooth);
+    }
+
+    .food-card {
+      position: relative;
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      padding: 12px 12px 14px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s var(--ease-spring), box-shadow 0.22s ease;
+      will-change: transform, opacity;
+      cursor: pointer;
+    }
+
+    .food-card.stagger-in {
+      opacity: 0;
+      transform: translate3d(0, 26px, 0);
+    }
+
+    .food-card.stagger-shown {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition: transform 0.45s var(--ease-spring), opacity 0.38s ease, box-shadow 0.2s ease;
+    }
+
+    .food-card:hover {
+      box-shadow: 0 14px 30px rgba(155, 10, 10, 0.11);
+    }
+
+    .food-card:active {
+      transform: scale(0.97);
+    }
+
+    .card-fav-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 4;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #B5B5B5;
+      transition: transform 0.18s var(--ease-spring), color 0.2s ease;
+    }
+
+    .card-fav-btn.liked {
+      color: var(--color-primary);
+    }
+
+    .card-fav-btn.pop {
+      animation: heartPop 0.42s var(--ease-spring);
+    }
+
+    .card-img-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 0.88;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #FFF7EB;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
+    }
+
+    .card-img-stage::before {
+      content: '';
+      position: absolute;
+      width: 82%;
+      height: 82%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 178, 26, 0.22) 0%, rgba(155, 10, 10, 0.06) 100%);
+      pointer-events: none;
+    }
+
+    .food-img-wrap {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      will-change: transform;
+      transition: transform 0.18s ease-out;
+    }
+
+    .food-img-float {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+      animation: floatBob 4.2s ease-in-out infinite;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .food-img-float.loaded {
+      opacity: 1;
+    }
+
+    /* Skeleton Shimmer */
+    .skeleton-box {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #F1F1F1 25%, #FAFAFA 50%, #F1F1F1 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.3s infinite linear;
+      z-index: 1;
+    }
+
+    .skeleton-box.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .card-name {
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 3px;
+      color: var(--color-text);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-weight {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      margin-bottom: 10px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .card-price {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--color-primary);
+    }
+
+    .card-add-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: var(--color-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 12px rgba(155, 10, 10, 0.25);
+      transition: transform 0.16s var(--ease-spring), background-color 0.2s ease;
+    }
+
+    .card-add-btn:hover {
+      background: var(--color-primary-dark);
+    }
+
+    .card-add-btn:active {
+      transform: scale(0.88);
+    }
+
+    /* --- Floating Red Pill Bottom Navigation --- */
+    .bottom-nav-wrap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(14px + var(--safe-bottom));
+      display: flex;
+      justify-content: center;
+      z-index: 120;
+      pointer-events: none;
+      transition: transform 0.32s var(--ease-spring), opacity 0.25s ease;
+    }
+
+    .bottom-nav-wrap.hidden {
+      transform: translate3d(0, 110px, 0);
+      opacity: 0;
+    }
+
+    .bottom-nav-pill {
+      position: relative;
+      pointer-events: auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      align-items: center;
+      width: calc(100% - 36px);
+      max-width: 354px;
+      height: 64px;
+      padding: 6px;
+      border-radius: var(--radius-pill);
+      background: var(--color-primary);
+      box-shadow: var(--shadow-nav);
+    }
+
+    .nav-active-pill {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: calc((100% - 12px) / 4);
+      height: 52px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.18);
+      transition: transform 0.36s var(--ease-spring);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .nav-item {
+      position: relative;
+      z-index: 1;
+      height: 52px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 10px;
+      font-weight: 700;
+      transition: color 0.22s ease;
+    }
+
+    .nav-item.active {
+      color: var(--color-white);
+    }
+
+    .nav-item.active svg {
+      animation: navIconHop 0.42s var(--ease-spring);
+    }
+
+    .nav-badge {
+      position: absolute;
+      top: 4px;
+      right: 16px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: var(--color-accent);
+      color: #2B0D00;
+      font-size: 10px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--color-primary);
+      transform: scale(1);
+      transition: transform 0.2s var(--ease-spring), opacity 0.2s ease;
+    }
+
+    .nav-badge.empty {
+      transform: scale(0);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .nav-badge.bounce {
+      animation: badgeBounce 0.48s var(--ease-spring);
+    }
+
+    /* =========================================================================
+       4. DETAIL PRODUK, KERANJANG, FAVORIT, PROFIL & CHECKOUT
+       ========================================================================= */
+    .sub-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px 8px;
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      z-index: 25;
+    }
+
+    .sub-topbar.transparent {
+      background: transparent;
+      backdrop-filter: none;
+      position: absolute;
+      top: var(--safe-top);
+      left: 0;
+      right: 0;
+    }
+
+    .sub-title {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    /* --- Product Detail --- */
+    .detail-hero {
+      position: relative;
+      padding: 58px 24px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .detail-red-circle {
+      position: absolute;
+      top: -120px;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #BA1010 0%, #9B0A0A 75%);
+      box-shadow: 0 18px 40px rgba(155, 10, 10, 0.24);
+      z-index: 0;
+    }
+
+    .detail-photo-frame {
+      position: relative;
+      z-index: 1;
+      width: 224px;
+      height: 224px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 6px solid var(--color-white);
+      box-shadow: 0 22px 42px rgba(0, 0, 0, 0.2);
+      background: #FFF6E8;
+    }
+
+    .detail-photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detail-body {
+      padding: 8px 20px 24px;
+    }
+
+    .detail-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .detail-name {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .detail-weight {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-text-muted);
+      background: var(--color-input);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    .detail-price {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--color-primary);
+      white-space: nowrap;
+    }
+
+    .detail-section-label {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      margin: 16px 0 8px;
+    }
+
+    .ingredients-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .ingredient-tag {
+      background: #FFF7EB;
+      color: #6B3D00;
+      border: 1px solid rgba(255, 178, 26, 0.4);
+      padding: 6px 11px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .addon-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .addon-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      background: var(--color-input);
+    }
+
+    .addon-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .addon-price {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-top: 2px;
+    }
+
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--color-white);
+      padding: 4px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .step-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--color-input);
+      color: var(--color-text);
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.14s var(--ease-spring), background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .step-btn.plus {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .step-btn:active {
+      transform: scale(0.88);
+    }
+
+    .step-val {
+      min-width: 18px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .detail-bottom-bar {
+      position: sticky;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 12px 18px calc(16px + var(--safe-bottom));
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid var(--color-border);
+      z-index: 20;
+    }
+
+    /* --- Buttons --- */
+    .btn-primary {
+      width: 100%;
+      height: 52px;
+      border-radius: var(--radius-pill);
+      background: var(--color-primary);
+      color: var(--color-white);
+      font-size: 15px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 10px 22px rgba(155, 10, 10, 0.26);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.16s var(--ease-spring), background-color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-dark);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.96);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      height: 50px;
+      border-radius: var(--radius-pill);
+      background: var(--color-input);
+      color: var(--color-text);
+      font-size: 14px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.16s var(--ease-spring), background-color 0.2s ease;
+    }
+
+    .btn-secondary:active {
+      transform: scale(0.96);
+    }
+
+    /* --- Cart & Favorites Lists --- */
+    .list-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 8px 18px 18px;
+    }
+
+    .cart-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      padding: 12px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .cart-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #FFF6E8;
+    }
+
+    .cart-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .cart-name {
+      font-size: 14.5px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .cart-addons {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      font-weight: 600;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .cart-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .cart-price {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--color-primary);
+    }
+
+    .trash-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(155, 10, 10, 0.08);
+      color: var(--color-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.15s var(--ease-spring);
+    }
+
+    .trash-btn:active {
+      transform: scale(0.88);
+    }
+
+    .cart-cta-wrap {
+      padding: 6px 18px 16px;
+    }
+
+    .empty-state {
+      padding: 46px 28px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .empty-icon-circle {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .empty-title {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .empty-desc {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+      max-width: 260px;
+    }
+
+    /* --- Profile --- */
+    .profile-guest-card {
+      margin: 12px 18px;
+      padding: 26px 20px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(155deg, #FFF7EB 0%, #FFFFFF 68%);
+      border: 1px solid rgba(255, 178, 26, 0.35);
+      box-shadow: var(--shadow-card);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-guest-badge {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: var(--color-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 24px rgba(155, 10, 10, 0.25);
+    }
+
+    .profile-user-header {
+      margin: 10px 18px 16px;
+      padding: 18px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, #9B0A0A 0%, #B81212 100%);
+      color: var(--color-white);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 14px 28px rgba(155, 10, 10, 0.24);
+    }
+
+    .profile-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--color-accent);
+      background: var(--color-white);
+      flex-shrink: 0;
+    }
+
+    .profile-name {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .profile-email {
+      font-size: 12.5px;
+      opacity: 0.9;
+      word-break: break-all;
+    }
+
+    .profile-provider-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 6px;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.18);
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+
+    .profile-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 0 18px 18px;
+    }
+
+    .profile-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--color-white);
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--color-border);
+      transition: transform 0.16s var(--ease-spring), background-color 0.2s ease;
+    }
+
+    .profile-menu-item:active {
+      transform: scale(0.98);
+      background: #FAFAFA;
+    }
+
+    .profile-menu-item.stagger-row {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0);
+    }
+
+    .profile-menu-item.stagger-row.shown {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition: opacity 0.35s ease, transform 0.38s var(--ease-spring);
+    }
+
+    .profile-menu-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14.5px;
+      font-weight: 700;
+    }
+
+    .profile-menu-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .profile-menu-item.logout .profile-menu-icon {
+      background: rgba(155, 10, 10, 0.14);
+    }
+
+    .profile-menu-item.logout {
+      color: var(--color-primary);
+      margin-top: 6px;
+    }
+
+    /* --- Checkout & Order Success --- */
+    .checkout-block {
+      margin: 10px 18px;
+      padding: 16px;
+      background: var(--color-white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--color-border);
+    }
+
+    .checkout-block-title {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .input-field {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      background: var(--color-input);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text);
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .input-field:focus {
+      background: var(--color-white);
+      border-color: var(--color-primary);
+    }
+
+    .pay-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .pay-option {
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: var(--color-input);
+      border: 2px solid transparent;
+      text-align: left;
+      transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .pay-option.selected {
+      background: #FFF8EB;
+      border-color: var(--color-primary);
+    }
+
+    .pay-option:active {
+      transform: scale(0.97);
+    }
+
+    .pay-name {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .pay-sub {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+    }
+
+    .summary-line.free strong {
+      color: var(--color-success);
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 17px;
+      font-weight: 800;
+      padding-top: 10px;
+      border-top: 1px dashed #DFDFDF;
+      color: var(--color-text);
+    }
+
+    .summary-total span:last-child {
+      color: var(--color-primary);
+    }
+
+    .success-screen-wrap {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 24px;
+      text-align: center;
+      gap: 14px;
+    }
+
+    .success-circle {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 18px 36px rgba(155, 10, 10, 0.28);
+      animation: popIn 0.5s var(--ease-spring);
+    }
+
+    /* =========================================================================
+       5. MODALS (DAFTAR, MASUK, DEMO ACCOUNT PICKER, DRAWER SHEETS)
+       ========================================================================= */
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(16, 6, 6, 0.56);
+      backdrop-filter: blur(4px);
+      z-index: 400;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.26s ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-sheet {
+      width: 100%;
+      max-height: 88%;
+      overflow-y: auto;
+      background: var(--color-white);
+      border-radius: 30px 30px 0 0;
+      padding: 14px 22px calc(26px + var(--safe-bottom));
+      transform: translate3d(0, 100%, 0);
+      transition: transform 0.36s var(--ease-spring);
+      position: relative;
+    }
+
+    .modal-backdrop.open .modal-sheet {
+      transform: translate3d(0, 0, 0);
+    }
+
+    .modal-sheet.shake {
+      animation: modalShake 0.44s ease;
+    }
+
+    .sheet-handle {
+      width: 44px;
+      height: 5px;
+      border-radius: 999px;
+      background: #E0E0E0;
+      margin: 0 auto 14px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .modal-error-banner {
+      background: #FFF0F0;
+      color: var(--color-primary);
+      border: 1px solid rgba(155, 10, 10, 0.22);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 12.5px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: none;
+      animation: slideDownErr 0.28s var(--ease-spring);
+    }
+
+    .modal-error-banner.show {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--color-text-muted);
+      margin-bottom: 6px;
+    }
+
+    .divider-or {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 16px 0;
+      color: var(--color-text-muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .divider-or::before,
+    .divider-or::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+
+    .social-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .social-btn {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 52px;
+      border-radius: var(--radius-pill);
+      font-size: 14.5px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition:
+        width 0.32s var(--ease-spring),
+        transform 0.16s var(--ease-spring),
+        opacity 0.24s ease,
+        background-color 0.22s ease;
+    }
+
+    .social-btn.google {
+      background: var(--color-white);
+      color: var(--color-text);
+      border: 1.5px solid #E2E2E2;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+
+    .social-btn.apple {
+      background: #111111;
+      color: var(--color-white);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+    }
+
+    .social-btn.pressing {
+      transform: scale(0.96);
+    }
+
+    .social-btn.morphed {
+      width: 52px !important;
+      padding: 0;
+    }
+
+    .social-btn.faded-out {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.94);
+    }
+
+    .btn-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(155, 10, 10, 0.18);
+      transform: scale(0);
+      animation: rippleAnim 0.55s ease-out forwards;
+      pointer-events: none;
+    }
+
+    .social-btn.apple .btn-ripple {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-spinner {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 3px solid rgba(155, 10, 10, 0.2);
+      border-top-color: var(--color-primary);
+      animation: spin 0.75s linear infinite;
+    }
+
+    .social-btn.apple .btn-spinner {
+      border-color: rgba(255, 255, 255, 0.24);
+      border-top-color: var(--color-white);
+    }
+
+    .btn-check-svg path {
+      stroke-dasharray: 42;
+      stroke-dashoffset: 42;
+      animation: drawStroke 0.42s ease forwards;
+    }
+
+    .demo-account-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      background: var(--color-input);
+      margin-bottom: 10px;
+      text-align: left;
+      transition: transform 0.15s var(--ease-spring), background-color 0.2s ease;
+    }
+
+    .demo-account-row:active {
+      transform: scale(0.98);
+      background: #E8E8E8;
+    }
+
+    .demo-account-row img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* =========================================================================
+       6. OVERLAYS: CIRCULAR REVEAL AUTH, FLY-TO-CART, TOAST, CONFETTI
+       ========================================================================= */
+    .auth-reveal-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 800;
+      background: radial-gradient(circle at 50% 40%, #B81111 0%, #9B0A0A 75%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      color: var(--color-white);
+      clip-path: circle(0px at 50% 50%);
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .auth-reveal-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--color-accent);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
+      opacity: 0;
+      transform: scale(0.7);
+    }
+
+    .auth-reveal-greeting {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      transform: translate3d(0, 18px, 0);
+    }
+
+    .auth-reveal-sub {
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translate3d(0, 12px, 0);
+      color: rgba(255, 255, 255, 0.86);
+    }
+
+    .confetti-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 860;
+      pointer-events: none;
+    }
+
+    .toast-pill {
+      position: absolute;
+      top: calc(14px + var(--safe-top));
+      left: 50%;
+      transform: translate3d(-50%, -80px, 0);
+      background: #1B1B1B;
+      color: var(--color-white);
+      padding: 10px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 12.5px;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+      z-index: 920;
+      opacity: 0;
+      white-space: nowrap;
+      transition: transform 0.32s var(--ease-spring), opacity 0.25s ease;
+      pointer-events: none;
+    }
+
+    .toast-pill.show {
+      transform: translate3d(-50%, 0, 0);
+      opacity: 1;
+    }
+
+    /* =========================================================================
+       7. KEYFRAMES & PREFERS-REDUCED-MOTION
+       ========================================================================= */
+    @keyframes splashLogoIn {
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes fadeUpSimple {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes drawStroke {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    @keyframes floatBob {
+      0%, 100% { transform: translate3d(0, 0px, 0); }
+      50% { transform: translate3d(0, -5px, 0); }
+    }
+    @keyframes heartPop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.36); }
+      75% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+    @keyframes badgeBounce {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.42); }
+      70% { transform: scale(0.88); }
+      100% { transform: scale(1); }
+    }
+    @keyframes navIconHop {
+      0% { transform: translate3d(0, 0, 0); }
+      40% { transform: translate3d(0, -5px, 0) scale(1.12); }
+      100% { transform: translate3d(0, 0, 0) scale(1); }
+    }
+    @keyframes gridFlipFade {
+      0% { opacity: 0.25; transform: perspective(700px) rotateX(8deg) scale(0.97); }
+      100% { opacity: 1; transform: perspective(700px) rotateX(0deg) scale(1); }
+    }
+    @keyframes modalShake {
+      0%, 100% { transform: translate3d(0, 0, 0); }
+      20% { transform: translate3d(-9px, 0, 0); }
+      40% { transform: translate3d(9px, 0, 0); }
+      60% { transform: translate3d(-6px, 0, 0); }
+      80% { transform: translate3d(6px, 0, 0); }
+    }
+    @keyframes slideDownErr {
+      from { opacity: 0; transform: translate3d(0, -10px, 0); }
+      to { opacity: 1; transform: translate3d(0, 0, 0); }
+    }
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .food-img-float {
+        animation: none !important;
+      }
+    }
+
+    body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="phone-frame" id="phoneFrame">
+      <div class="phone-notch" aria-hidden="true"></div>
+      <div class="phone-home-bar" aria-hidden="true"></div>
+
+      <div class="app-viewport" id="appViewport">
+        <!-- Toast Notification -->
+        <div class="toast-pill" id="toastPill" role="status" aria-live="polite"></div>
+
+        <!-- 1. SPLASH SCREEN -->
+        <section class="splash-screen" id="splashScreen" aria-label="Layar Pembuka Bite">
+          <div class="splash-logo-wrap">
+            <!-- Custom Bite Script SVG + Swoosh -->
+            <svg width="176" height="86" viewBox="0 0 176 86" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Bite">
+              <text x="88" y="54" text-anchor="middle" fill="#FFFFFF" font-family="Raleway, sans-serif" font-style="italic" font-weight="800" font-size="54" letter-spacing="-2">Bite</text>
+              <path class="splash-swoosh-path" d="M24 68 C64 78, 120 75, 154 58" stroke="#FFB21A" stroke-width="5.5" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="splash-tagline">Hangat &amp; Cepat</div>
+        </section>
+
+        <!-- 2. BERANDA (HOME) -->
+        <section class="screen active" id="screen-home" aria-label="Beranda">
+          <header class="home-header enter-ready" id="homeHeader">
+            <button class="icon-btn" id="btnMenuDrawer" aria-label="Buka menu cepat">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                <line x1="4" y1="7" x2="20" y2="7" />
+                <line x1="4" y1="12" x2="15" y2="12" />
+                <line x1="4" y1="17" x2="20" y2="17" />
+              </svg>
+            </button>
+
+            <svg width="84" height="36" viewBox="0 0 120 50" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Bite">
+              <text x="60" y="34" text-anchor="middle" fill="#9B0A0A" font-family="Raleway, sans-serif" font-style="italic" font-weight="800" font-size="34" letter-spacing="-1">Bite</text>
+              <path d="M18 42 C48 48, 86 46, 106 36" stroke="#FFB21A" stroke-width="4" stroke-linecap="round" />
+            </svg>
+
+            <button class="location-pill" id="btnLocation" aria-label="Ubah lokasi pengiriman">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
+              </svg>
+              <span id="currentLocationLabel">Jakarta Sel.</span>
+            </button>
+          </header>
+
+          <!-- Promo Carousel -->
+          <div class="promo-section">
+            <div class="promo-carousel" id="promoCarousel">
+              <div class="promo-track" id="promoTrack"></div>
+            </div>
+            <div class="promo-dots" id="promoDots"></div>
+          </div>
+
+          <!-- Category Chips -->
+          <div class="category-wrap">
+            <div class="category-scroll" id="categoryScroll">
+              <div class="category-indicator" id="categoryIndicator"></div>
+            </div>
+          </div>
+
+          <div class="section-row">
+            <h2 class="section-title" id="menuSectionTitle">Menu Populer</h2>
+            <span class="section-count" id="menuSectionCount">12 menu</span>
+          </div>
+
+          <!-- 2-Col Food Grid -->
+          <div class="food-grid" id="foodGrid"></div>
+        </section>
+
+        <!-- 3. DETAIL PRODUK -->
+        <section class="screen no-nav-pad" id="screen-detail" aria-label="Detail Produk"></section>
+
+        <!-- 4. KERANJANG -->
+        <section class="screen" id="screen-cart" aria-label="Keranjang"></section>
+
+        <!-- 5. FAVORIT -->
+        <section class="screen" id="screen-favorites" aria-label="Favorit"></section>
+
+        <!-- 6. PROFIL -->
+        <section class="screen" id="screen-profile" aria-label="Profil"></section>
+
+        <!-- 7. CHECKOUT -->
+        <section class="screen no-nav-pad" id="screen-checkout" aria-label="Checkout"></section>
+
+        <!-- 8. SUKSES PESANAN -->
+        <section class="screen no-nav-pad" id="screen-success" aria-label="Pesanan Sukses"></section>
+
+        <!-- FLOATING RED PILL BOTTOM NAV -->
+        <nav class="bottom-nav-wrap" id="bottomNavWrap" aria-label="Navigasi Utama">
+          <div class="bottom-nav-pill" id="bottomNavPill">
+            <div class="nav-active-pill" id="navActivePill"></div>
+            <button class="nav-item active" data-tab="home" aria-label="Beranda">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3l9 7.5V20a1.5 1.5 0 01-1.5 1.5H15v-6h-6v6H4.5A1.5 1.5 0 013 20v-9.5L12 3z"/>
+              </svg>
+              <span>Beranda</span>
+            </button>
+            <button class="nav-item" data-tab="cart" id="navCartBtn" aria-label="Keranjang">
+              <span class="nav-badge empty" id="cartBadge">0</span>
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="20" r="1.5" fill="currentColor"/>
+                <circle cx="17" cy="20" r="1.5" fill="currentColor"/>
+                <path d="M3 4h2l2.4 10.5a1.5 1.5 0 001.5 1.2h8.6a1.5 1.5 0 001.4-1.1L21 7H6"/>
+              </svg>
+              <span>Keranjang</span>
+            </button>
+            <button class="nav-item" data-tab="favorites" id="navFavBtn" aria-label="Favorit">
+              <span class="nav-badge empty" id="favBadge">0</span>
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+              <span>Favorit</span>
+            </button>
+            <button class="nav-item" data-tab="profile" id="navProfileBtn" aria-label="Profil">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12a4.5 4.5 0 100-9 4.5 4.5 0 000 9zm0 2c-4.42 0-8 2.24-8 5v1.5h16V19c0-2.76-3.58-5-8-5z"/>
+              </svg>
+              <span>Profil</span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- MODAL BACKDROP (REGISTER, LOGIN, DEMO PICKER, SUB-SHEETS) -->
+        <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+          <div class="modal-sheet" id="modalSheet" role="dialog" aria-modal="true"></div>
+        </div>
+
+        <!-- CIRCULAR REVEAL AUTH OVERLAY -->
+        <div class="auth-reveal-overlay" id="authRevealOverlay" aria-hidden="true">
+          <img class="auth-reveal-avatar" id="authRevealAvatar" src="" alt="Avatar Pengguna" />
+          <div class="auth-reveal-greeting" id="authRevealGreeting">Halo!</div>
+          <div class="auth-reveal-sub" id="authRevealSub">Menyiapkan meja favoritmu...</div>
+        </div>
+
+        <!-- CONFETTI CANVAS -->
+        <canvas class="confetti-canvas" id="confettiCanvas" aria-hidden="true"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. KONFIGURASI AUTENTIKASI (GOOGLE & APPLE)
+       =========================================================================
+       Cara mengisi untuk mode produksi:
+       1. GOOGLE_CLIENT_ID:
+          - Buka Google Cloud Console > APIs & Services > Credentials.
+          - Buat OAuth 2.0 Client ID (Application type: Web application).
+          - Tambahkan domain Anda di "Authorized JavaScript origins".
+          - Tempel Client ID (format: 1234567890-xxxx.apps.googleusercontent.com).
+       2. APPLE_CLIENT_ID & APPLE_REDIRECT_URI:
+          - Buka Apple Developer > Certificates, Identifiers & Profiles > Identifiers.
+          - Buat Services ID (aktifkan Sign In with Apple), atur Return URLs.
+          - Tempel Services ID ke APPLE_CLIENT_ID dan URL callback ke APPLE_REDIRECT_URI.
+       Catatan: Selama konstanta di bawah ini kosong (""), aplikasi otomatis
+       mengaktifkan MODE DEMO dengan bottom sheet pemilih akun.
+       ========================================================================= */
+    const GOOGLE_CLIENT_ID = "";
+    const APPLE_CLIENT_ID = "";
+    const APPLE_REDIRECT_URI = window.location.href.split("#")[0];
+
+    /* =========================================================================
+       2. DATA PRODUK, KATEGORI & BANNER PROMO (12 MENU LENGKAP)
+       ========================================================================= */
+    const CATEGORIES = [
+      { id: "Semua", label: "Semua", icon: "🍽️" },
+      { id: "Burger", label: "Burger", icon: "🍔" },
+      { id: "Pizza", label: "Pizza", icon: "🍕" },
+      { id: "Sushi", label: "Sushi", icon: "🍣" },
+      { id: "Hot Dog", label: "Hot Dog", icon: "🌭" },
+      { id: "Minuman", label: "Minuman", icon: "🥤" }
+    ];
+
+    const PROMOS = [
+      {
+        badge: "Promo Kilat",
+        title: "Diskon 50% Semua Burger",
+        sub: "Berlaku hari ini untuk pembelian pertama & pengguna aktif.",
+        percent: "50%",
+        theme: "theme-red",
+        category: "Burger"
+      },
+      {
+        badge: "Paket Hemat",
+        title: "Pesta Pizza & Minuman",
+        sub: "Potongan hingga 50% plus gratis ongkir ke seluruh kota.",
+        percent: "50%",
+        theme: "theme-gold",
+        category: "Pizza"
+      },
+      {
+        badge: "Menu Baru",
+        title: "Sushi Segar Diskon 50%",
+        sub: "Salmon aburi & dragon maki siap kirim dalam 25 menit.",
+        percent: "50%",
+        theme: "theme-dark",
+        category: "Sushi"
+      }
+    ];
+
+    const PRODUCTS = [
+      {
+        id: "p1",
+        name: "Classic Beef Smash",
+        category: "Burger",
+        weight: "260g",
+        price: 48000,
+        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Daging Sapi Australia", "Keju Cheddar", "Brioche Bun", "Selada Romaine", "Saus Rahasia Bite"],
+        addons: [
+          { id: "a1", name: "Keju Cheddar Ekstra", price: 8000 },
+          { id: "a2", name: "Patty Sapi Tambahan", price: 18000 },
+          { id: "a3", name: "Kentang Goreng Mini", price: 14000 }
+        ]
+      },
+      {
+        id: "p2",
+        name: "Double Cheese Truffle",
+        category: "Burger",
+        weight: "320g",
+        price: 65000,
+        image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Double Patty Wagyu", "Krim Jamur Truffle", "Keju Red Leicester", "Bawang Karamel", "Brioche Panggang"],
+        addons: [
+          { id: "a1", name: "Minyak Truffle Ekstra", price: 12000 },
+          { id: "a2", name: "Telur Mata Sapi", price: 7000 },
+          { id: "a3", name: "Saus Keju Pedas", price: 6000 }
+        ]
+      },
+      {
+        id: "p3",
+        name: "Crispy Chicken Spicy",
+        category: "Burger",
+        weight: "240g",
+        price: 42000,
+        image: "https://images.unsplash.com/photo-1615297928064-24977384d0da?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Paha Ayam Krispi", "Glaze Madu Cabai", "Acar Timun Jepang", "Coleslaw Segar", "Roti Wijen"],
+        addons: [
+          { id: "a1", name: "Saus Sambal Korea", price: 5000 },
+          { id: "a2", name: "Keju Mozzarella Leleh", price: 9000 },
+          { id: "a3", name: "Onion Ring (4 pcs)", price: 13000 }
+        ]
+      },
+      {
+        id: "p4",
+        name: "Pepperoni Artisan",
+        category: "Pizza",
+        weight: "420g",
+        price: 89000,
+        image: "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Adonan Sourdough 48 Jam", "Pepperoni Sapi Halal", "Saus Tomat San Marzano", "Mozzarella Fior di Latte", "Daun Oregano"],
+        addons: [
+          { id: "a1", name: "Pinggiran Isi Keju", price: 18000 },
+          { id: "a2", name: "Ekstra Pepperoni", price: 15000 },
+          { id: "a3", name: "Dip Saus Bawang Putih", price: 7000 }
+        ]
+      },
+      {
+        id: "p5",
+        name: "Margherita Mozza",
+        category: "Pizza",
+        weight: "390g",
+        price: 75000,
+        image: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Tomat Segar Hancur", "Mozzarella Segar", "Daun Basil Organik", "Minyak Zaitun Extra Virgin", "Garam Laut"],
+        addons: [
+          { id: "a1", name: "Ekstra Mozzarella", price: 14000 },
+          { id: "a2", name: "Jamur Champignon", price: 10000 },
+          { id: "a3", name: "Minyak Cabai Italia", price: 5000 }
+        ]
+      },
+      {
+        id: "p6",
+        name: "BBQ Meat Lovers",
+        category: "Pizza",
+        weight: "450g",
+        price: 98000,
+        image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Daging Sapi Asap", "Sosis Bratwurst", "Saus BBQ Hickory", "Paprika Merah", "Keju Cheddar & Mozza"],
+        addons: [
+          { id: "a1", name: "Pinggiran Isi Sosis", price: 20000 },
+          { id: "a2", name: "Jagung Manis Bakar", price: 7000 },
+          { id: "a3", name: "Saus Keju Dipping", price: 8000 }
+        ]
+      },
+      {
+        id: "p7",
+        name: "Salmon Aburi Roll",
+        category: "Sushi",
+        weight: "220g",
+        price: 68000,
+        image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Salmon Norwegia Panggang", "Nasi Sushi Koshihikari", "Alpukat Mentega", "Tobiko Oranye", "Saus Mentai Spesial"],
+        addons: [
+          { id: "a1", name: "Ekstra Saus Mentai", price: 8000 },
+          { id: "a2", name: "Chuka Wakame Salad", price: 14000 },
+          { id: "a3", name: "Wasabi & Jahe Segar", price: 4000 }
+        ]
+      },
+      {
+        id: "p8",
+        name: "Dragon Crunch Maki",
+        category: "Sushi",
+        weight: "240g",
+        price: 72000,
+        image: "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Udang Tempura Renyah", "Belut Unagi Glaze", "Timun Kyuri", "Remah Tenkasu", "Saus Teriyaki Manis"],
+        addons: [
+          { id: "a1", name: "Edamame Garam Laut", price: 15000 },
+          { id: "a2", name: "Tamago Manis (2 pcs)", price: 12000 },
+          { id: "a3", name: "Mayones Pedas Jepang", price: 6000 }
+        ]
+      },
+      {
+        id: "p9",
+        name: "New York Chili Dog",
+        category: "Hot Dog",
+        weight: "210g",
+        price: 39000,
+        image: "https://images.unsplash.com/photo-1619740455993-9e612b1af08a?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Sosis Sapi Jumbo", "Daging Cincang Chili", "Roti Hot Dog Lembut", "Mustard Kuning", "Bawang Bombay Cincang"],
+        addons: [
+          { id: "a1", name: "Taburan Keju Parut", price: 7000 },
+          { id: "a2", name: "Jalapeno Iris", price: 5000 },
+          { id: "a3", name: "Kentang Goreng Renyah", price: 14000 }
+        ]
+      },
+      {
+        id: "p10",
+        name: "Cheesy Bratwurst Dog",
+        category: "Hot Dog",
+        weight: "230g",
+        price: 44000,
+        image: "https://images.unsplash.com/photo-1541214113241-21578d2d9b62?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Sosis Bratwurst Panggang", "Saus Keju Nacho Hangat", "Bawang Goreng Krispi", "Saus Tomat Panggang", "Roti Susu"],
+        addons: [
+          { id: "a1", name: "Daging Asap Cincang", price: 11000 },
+          { id: "a2", name: "Ekstra Saus Keju", price: 7000 },
+          { id: "a3", name: "Sosis Mini Tambahan", price: 15000 }
+        ]
+      },
+      {
+        id: "p11",
+        name: "Yuzu Berry Fizz",
+        category: "Minuman",
+        weight: "350ml",
+        price: 26000,
+        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Sirup Yuzu Jepang", "Stroberi Segar Hancur", "Air Soda Dingin", "Daun Mint", "Es Batu Kristal"],
+        addons: [
+          { id: "a1", name: "Nata de Coco", price: 5000 },
+          { id: "a2", name: "Jelly Stroberi", price: 6000 },
+          { id: "a3", name: "Upgrade Gelas Besar", price: 7000 }
+        ]
+      },
+      {
+        id: "p12",
+        name: "Iced Caramel Latte",
+        category: "Minuman",
+        weight: "350ml",
+        price: 32000,
+        image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=640&q=80",
+        ingredients: ["Espresso Arabika Gayo", "Susu Segar Dingin", "Saus Karamel Mentega", "Es Batu"],
+        addons: [
+          { id: "a1", name: "Ekstra Shot Espresso", price: 8000 },
+          { id: "a2", name: "Ganti Oat Milk", price: 9000 },
+          { id: "a3", name: "Whipped Cream", price: 6000 }
+        ]
+      }
+    ];
+
+    const DEMO_ACCOUNTS = {
+      google: [
+        {
+          name: "Raka Pratama",
+          email: "raka.pratama@gmail.com",
+          photo: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80",
+          provider: "google"
+        },
+        {
+          name: "Nadia Kusuma",
+          email: "nadia.kusuma@gmail.com",
+          photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
+          provider: "google"
+        }
+      ],
+      apple: [
+        {
+          name: "Dimas Wijaya",
+          email: "dimas.wijaya@icloud.com",
+          photo: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=200&q=80",
+          provider: "apple"
+        },
+        {
+          name: "Salsa Rahma",
+          email: "salsa.rahma@privaterelay.appleid.com",
+          photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80",
+          provider: "apple"
+        }
+      ]
+    };
+
+    const LOCATIONS = [
+      "Jl. Kemang Raya No. 24, Jakarta Selatan",
+      "Jl. Dago Pakar Barat No. 12, Bandung",
+      "Jl. Tunjungan No. 88, Surabaya",
+      "Jl. Malioboro No. 45, Yogyakarta"
+    ];
+
+    /* =========================================================================
+       3. STATE & LOCALSTORAGE (AMAN UNTUK WEBVIEW & BROWSER)
+       ========================================================================= */
+    const STORAGE_KEYS = {
+      USER: "bite_user_v1",
+      CART: "bite_cart_v1",
+      FAVS: "bite_favorites_v1",
+      ORDERS: "bite_orders_v1",
+      ADDRESS: "bite_address_v1",
+      REDUCE_MOTION: "bite_reduce_motion_v1"
+    };
+
+    const memoryFallback = {};
+    const safeStorage = {
+      get(key, fallback) {
+        try {
+          const raw = window.localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch (e) {
+          return key in memoryFallback ? memoryFallback[key] : fallback;
+        }
+      },
+      set(key, val) {
+        memoryFallback[key] = val;
+        try {
+          window.localStorage.setItem(key, JSON.stringify(val));
+        } catch (e) {
+          // Abaikan bila mode privat/kuota penuh
+        }
+      },
+      remove(key) {
+        delete memoryFallback[key];
+        try {
+          window.localStorage.removeItem(key);
+        } catch (e) {}
+      }
+    };
+
+    const state = {
+      route: "home",
+      history: ["home"],
+      activeCategory: "Semua",
+      promoIndex: 0,
+      selectedProductId: null,
+      detailQty: 1,
+      detailAddons: {},
+      user: safeStorage.get(STORAGE_KEYS.USER, null),
+      cart: safeStorage.get(STORAGE_KEYS.CART, []),
+      favorites: safeStorage.get(STORAGE_KEYS.FAVS, []),
+      orders: safeStorage.get(STORAGE_KEYS.ORDERS, []),
+      address: safeStorage.get(STORAGE_KEYS.ADDRESS, LOCATIONS[0]),
+      paymentMethod: "QRIS",
+      lastOrder: null,
+      activeModal: null,
+      pendingAuthBtn: null,
+      homeAnimatedOnce: false,
+      reduceMotionManual: safeStorage.get(STORAGE_KEYS.REDUCE_MOTION, false)
+    };
+
+    if (state.reduceMotionManual) {
+      document.body.classList.add("reduce-motion");
+    }
+
+    function saveCart() {
+      safeStorage.set(STORAGE_KEYS.CART, state.cart);
+      updateNavBadges();
+    }
+
+    function saveFavorites() {
+      safeStorage.set(STORAGE_KEYS.FAVS, state.favorites);
+      updateNavBadges();
+    }
+
+    function saveUser(userObj) {
+      state.user = userObj;
+      if (userObj) {
+        safeStorage.set(STORAGE_KEYS.USER, userObj);
+      } else {
+        safeStorage.remove(STORAGE_KEYS.USER);
+      }
+    }
+
+    function formatRp(num) {
+      return "Rp " + Number(num || 0).toLocaleString("id-ID");
+    }
+
+    function getProduct(id) {
+      return PRODUCTS.find((p) => p.id === id);
+    }
+
+    function prefersReducedMotion() {
+      return (
+        state.reduceMotionManual ||
+        (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      );
+    }
+
+    function getCartCount() {
+      return state.cart.reduce((sum, item) => sum + item.qty, 0);
+    }
+
+    function getCartSubtotal() {
+      return state.cart.reduce((sum, item) => {
+        const product = getProduct(item.productId);
+        if (!product) return sum;
+        const addonsCost = (item.addons || []).reduce((aSum, a) => aSum + a.price * a.qty, 0);
+        return sum + (product.price + addonsCost) * item.qty;
+      }, 0);
+    }
+
+    /* =========================================================================
+       4. ROUTER ANTAR LAYAR & ANDROID BACK HANDLER
+       ========================================================================= */
+    const TAB_ORDER = ["home", "cart", "favorites", "profile"];
+
+    function navigateTo(screenName, options = {}) {
+      const { pushHistory = true } = options;
+      const prev = state.route;
+      if (prev === screenName && screenName !== "detail") return;
+
+      state.route = screenName;
+      if (pushHistory && state.history[state.history.length - 1] !== screenName) {
+        state.history.push(screenName);
+      }
+
+      document.querySelectorAll(".screen").forEach((el) => {
+        el.classList.toggle("active", el.id === `screen-${screenName}`);
+      });
+
+      const showNav = TAB_ORDER.includes(screenName);
+      const navWrap = document.getElementById("bottomNavWrap");
+      navWrap.classList.toggle("hidden", !showNav);
+
+      if (showNav) {
+        updateBottomNavPill(screenName);
+      }
+
+      if (screenName === "home") renderFoodGrid(false);
+      if (screenName === "cart") renderCartScreen();
+      if (screenName === "favorites") renderFavoritesScreen();
+      if (screenName === "profile") renderProfileScreen(false);
+      if (screenName === "checkout") renderCheckoutScreen();
+      if (screenName === "success") renderSuccessScreen();
+
+      const activeEl = document.getElementById(`screen-${screenName}`);
+      if (activeEl) activeEl.scrollTop = 0;
+    }
+
+    function goBack() {
+      if (state.activeModal) {
+        closeModal();
+        return true;
+      }
+      if (state.route === "detail" || state.route === "checkout" || state.route === "success") {
+        state.history.pop();
+        const target = state.history[state.history.length - 1] || "home";
+        navigateTo(target, { pushHistory: false });
+        return true;
+      }
+      if (state.route !== "home") {
+        state.history = ["home"];
+        navigateTo("home", { pushHistory: false });
+        return true;
+      }
+      return false;
+    }
+
+    // Dipanggil oleh Android MainActivity BackHandler
+    window.__biteHandleBack = function () {
+      return goBack();
+    };
+
+    /* =========================================================================
+       5. MODUL ANIMASI (WAAPI, rAF FLY-TO-CART, HEART BURST, CONFETTI, TILT)
+       ========================================================================= */
+    const Anim = {
+      toastTimer: null,
+
+      showToast(msg) {
+        const toast = document.getElementById("toastPill");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        clearTimeout(this.toastTimer);
+        this.toastTimer = setTimeout(() => toast.classList.remove("show"), 2300);
+      },
+
+      bounceBadge(badgeEl) {
+        if (!badgeEl || prefersReducedMotion()) return;
+        badgeEl.classList.remove("bounce");
+        void badgeEl.offsetWidth;
+        badgeEl.classList.add("bounce");
+      },
+
+      flyToCart(sourceEl, imgSrc) {
+        const cartBtn = document.getElementById("navCartBtn");
+        const viewport = document.getElementById("appViewport");
+        if (!sourceEl || !cartBtn || !viewport || prefersReducedMotion()) {
+          this.bounceBadge(document.getElementById("cartBadge"));
+          return;
+        }
+
+        const vpRect = viewport.getBoundingClientRect();
+        const startRect = sourceEl.getBoundingClientRect();
+        const endRect = cartBtn.getBoundingClientRect();
+
+        const startX = startRect.left - vpRect.left + startRect.width / 2 - 22;
+        const startY = startRect.top - vpRect.top + startRect.height / 2 - 22;
+        const endX = endRect.left - vpRect.left + endRect.width / 2 - 14;
+        const endY = endRect.top - vpRect.top + endRect.height / 2 - 14;
+
+        const flyer = document.createElement("img");
+        flyer.src = imgSrc;
+        flyer.alt = "";
+        flyer.style.cssText = `
+          position: absolute;
+          left: 0; top: 0;
+          width: 44px; height: 44px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #FFFFFF;
+          box-shadow: 0 8px 18px rgba(155,10,10,0.3);
+          z-index: 890;
+          pointer-events: none;
+          will-change: transform, opacity;
+        `;
+        viewport.appendChild(flyer);
+
+        const duration = 560;
+        const t0 = performance.now();
+        const ctrlX = (startX + endX) / 2 + (startX < endX ? -24 : 24);
+        const ctrlY = Math.min(startY, endY) - 90;
+
+        const step = (now) => {
+          const p = Math.min(1, (now - t0) / duration);
+          const ease = 1 - Math.pow(1 - p, 3);
+          const inv = 1 - ease;
+          const x = inv * inv * startX + 2 * inv * ease * ctrlX + ease * ease * endX;
+          const y = inv * inv * startY + 2 * inv * ease * ctrlY + ease * ease * endY;
+          const scale = 1 - 0.56 * ease;
+          const opacity = p > 0.8 ? 1 - (p - 0.8) / 0.2 : 1;
+
+          flyer.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+          flyer.style.opacity = String(opacity);
+
+          if (p < 1) {
+            requestAnimationFrame(step);
+          } else {
+            flyer.remove();
+            this.bounceBadge(document.getElementById("cartBadge"));
+          }
+        };
+        requestAnimationFrame(step);
+      },
+
+      heartParticleBurst(anchorEl) {
+        const viewport = document.getElementById("appViewport");
+        if (!anchorEl || !viewport || prefersReducedMotion()) return;
+        const vpRect = viewport.getBoundingClientRect();
+        const rect = anchorEl.getBoundingClientRect();
+        const cx = rect.left - vpRect.left + rect.width / 2;
+        const cy = rect.top - vpRect.top + rect.height / 2;
+
+        const colors = ["#9B0A0A", "#FFB21A", "#FF4D4D", "#FFD166"];
+        for (let i = 0; i < 8; i++) {
+          const dot = document.createElement("span");
+          const angle = (Math.PI * 2 * i) / 8;
+          const dist = 20 + Math.random() * 14;
+          dot.style.cssText = `
+            position: absolute;
+            left: ${cx - 3}px;
+            top: ${cy - 3}px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: ${colors[i % colors.length]};
+            pointer-events: none;
+            z-index: 880;
+          `;
+          viewport.appendChild(dot);
+          dot.animate(
+            [
+              { transform: "translate3d(0,0,0) scale(1)", opacity: 1 },
+              {
+                transform: `translate3d(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px, 0) scale(0.2)`,
+                opacity: 0
+              }
+            ],
+            { duration: 420, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
+          ).onfinish = () => dot.remove();
+        }
+      },
+
+      launchConfetti() {
+        if (prefersReducedMotion()) return;
+        const canvas = document.getElementById("confettiCanvas");
+        const viewport = document.getElementById("appViewport");
+        if (!canvas || !viewport) return;
+
+        const rect = viewport.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        const ctx = canvas.getContext("2d");
+
+        const colors = ["#9B0A0A", "#FFB21A", "#FF4D4D", "#FFE066", "#FFFFFF"];
+        const pieces = Array.from({ length: 48 }, () => ({
+          x: rect.width * (0.2 + Math.random() * 0.6),
+          y: rect.height * 0.38,
+          vx: (Math.random() - 0.5) * 9,
+          vy: -Math.random() * 10 - 3,
+          size: 5 + Math.random() * 5,
+          rot: Math.random() * 360,
+          vr: (Math.random() - 0.5) * 14,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1
+        }));
+
+        const start = performance.now();
+        const draw = (now) => {
+          const elapsed = now - start;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          let alive = false;
+          pieces.forEach((p) => {
+            p.vy += 0.32;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rot += p.vr;
+            if (elapsed > 950) p.alpha = Math.max(0, p.alpha - 0.035);
+            if (p.alpha > 0 && p.y < canvas.height + 20) {
+              alive = true;
+              ctx.save();
+              ctx.globalAlpha = p.alpha;
+              ctx.translate(p.x, p.y);
+              ctx.rotate((p.rot * Math.PI) / 180);
+              ctx.fillStyle = p.color;
+              ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.66);
+              ctx.restore();
+            }
+          });
+          if (alive && elapsed < 2200) {
+            requestAnimationFrame(draw);
+          } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+          }
+        };
+        requestAnimationFrame(draw);
+      },
+
+      addRipple(btn, clientX, clientY) {
+        if (prefersReducedMotion()) return;
+        const rect = btn.getBoundingClientRect();
+        const ripple = document.createElement("span");
+        ripple.className = "btn-ripple";
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = `${size}px`;
+        const x = (clientX ? clientX - rect.left : rect.width / 2) - size / 2;
+        const y = (clientY ? clientY - rect.top : rect.height / 2) - size / 2;
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        btn.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 580);
+      },
+
+      async runLoginChoreography(btnEl, userObj) {
+        const viewport = document.getElementById("appViewport");
+        const vpRect = viewport.getBoundingClientRect();
+        const btnRect = btnEl.getBoundingClientRect();
+        const originX = btnRect.left - vpRect.left + btnRect.width / 2;
+        const originY = btnRect.top - vpRect.top + btnRect.height / 2;
+
+        if (prefersReducedMotion()) {
+          closeModal();
+          saveUser(userObj);
+          navigateTo("profile");
+          renderProfileScreen(true);
+          this.showToast(`Halo, ${userObj.name}!`);
+          return;
+        }
+
+        // Langkah 1: Tekan scale 0.96
+        btnEl.classList.add("pressing");
+        await waitMs(130);
+        btnEl.classList.remove("pressing");
+
+        // Langkah 2: Morph menjadi lingkaran spinner, tombol lain memudar
+        const siblingBtns = Array.from(document.querySelectorAll(".social-btn, .auth-submit-btn"))
+          .filter((el) => el !== btnEl);
+        siblingBtns.forEach((el) => el.classList.add("faded-out"));
+
+        btnEl.classList.add("morphed");
+        btnEl.innerHTML = `<span class="btn-spinner" aria-label="Memproses"></span>`;
+        await waitMs(650);
+
+        // Langkah 3: Spinner berubah menjadi centang SVG tergambar + getaran halus
+        btnEl.innerHTML = `
+          <svg class="btn-check-svg" width="26" height="26" viewBox="0 0 24 24" fill="none">
+            <path d="M5 13l4 4L19 7" stroke="${btnEl.classList.contains("apple") ? "#FFFFFF" : "#9B0A0A"}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
+        btnEl.animate(
+          [
+            { transform: "translate3d(0,0,0)" },
+            { transform: "translate3d(-3px,0,0)" },
+            { transform: "translate3d(3px,0,0)" },
+            { transform: "translate3d(0,0,0)" }
+          ],
+          { duration: 220 }
+        );
+        await waitMs(480);
+
+        // Langkah 4: Lingkaran merah membesar (circular reveal clip-path) + "Halo, {nama}!"
+        const overlay = document.getElementById("authRevealOverlay");
+        const revAvatar = document.getElementById("authRevealAvatar");
+        const revGreeting = document.getElementById("authRevealGreeting");
+        const revSub = document.getElementById("authRevealSub");
+
+        revAvatar.src = userObj.photo;
+        revGreeting.textContent = `Halo, ${userObj.name.split(" ")[0]}!`;
+        revSub.textContent = `Masuk sebagai ${userObj.email || userObj.phone || "Anggota Bite"}`;
+        overlay.style.opacity = "1";
+        overlay.style.pointerEvents = "auto";
+
+        const maxRadius = Math.hypot(vpRect.width, vpRect.height) + 40;
+        await overlay.animate(
+          [
+            { clipPath: `circle(24px at ${originX}px ${originY}px)` },
+            { clipPath: `circle(${maxRadius}px at ${originX}px ${originY}px)` }
+          ],
+          { duration: 540, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
+        ).finished;
+
+        revAvatar.animate(
+          [
+            { opacity: 0, transform: "scale(0.65)" },
+            { opacity: 1, transform: "scale(1)" }
+          ],
+          { duration: 360, easing: "cubic-bezier(0.22, 1.28, 0.36, 1)", fill: "forwards" }
+        );
+        revGreeting.animate(
+          [
+            { opacity: 0, transform: "translate3d(0, 18px, 0)" },
+            { opacity: 1, transform: "translate3d(0, 0, 0)" }
+          ],
+          { duration: 380, delay: 90, easing: "ease-out", fill: "forwards" }
+        );
+        revSub.animate(
+          [
+            { opacity: 0, transform: "translate3d(0, 12px, 0)" },
+            { opacity: 1, transform: "translate3d(0, 0, 0)" }
+          ],
+          { duration: 360, delay: 160, easing: "ease-out", fill: "forwards" }
+        );
+
+        // Langkah 6: Percikan confetti merah & kuning
+        this.launchConfetti();
+        await waitMs(860);
+
+        // Langkah 5: Transisi ke Profil dengan shared-element avatar terbang + stagger 60ms
+        closeModal(true);
+        saveUser(userObj);
+        navigateTo("profile");
+        renderProfileScreen(true);
+
+        const targetAvatar = document.getElementById("profileAvatarImg");
+        const startAvRect = revAvatar.getBoundingClientRect();
+        let flyingAvatar = null;
+        if (targetAvatar) {
+          const endAvRect = targetAvatar.getBoundingClientRect();
+          targetAvatar.style.opacity = "0";
+          flyingAvatar = document.createElement("img");
+          flyingAvatar.src = userObj.photo;
+          flyingAvatar.style.cssText = `
+            position: absolute;
+            left: ${startAvRect.left - vpRect.left}px;
+            top: ${startAvRect.top - vpRect.top}px;
+            width: ${startAvRect.width}px;
+            height: ${startAvRect.height}px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #FFB21A;
+            z-index: 840;
+            pointer-events: none;
+          `;
+          viewport.appendChild(flyingAvatar);
+
+          const dx = endAvRect.left - startAvRect.left;
+          const dy = endAvRect.top - startAvRect.top;
+          const scaleRatio = endAvRect.width / startAvRect.width;
+
+          flyingAvatar.animate(
+            [
+              { transform: "translate3d(0,0,0) scale(1)" },
+              { transform: `translate3d(${dx}px, ${dy}px, 0) scale(${scaleRatio})` }
+            ],
+            { duration: 480, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
+          ).onfinish = () => {
+            targetAvatar.style.opacity = "1";
+            flyingAvatar.remove();
+          };
+        }
+
+        await overlay.animate(
+          [{ opacity: 1 }, { opacity: 0 }],
+          { duration: 340, easing: "ease-out", fill: "forwards" }
+        ).finished;
+
+        overlay.style.pointerEvents = "none";
+        overlay.style.clipPath = "circle(0px at 50% 50%)";
+      },
+
+      async runLogoutChoreography() {
+        const profileScreen = document.getElementById("screen-profile");
+        const overlay = document.getElementById("authRevealOverlay");
+        const revAvatar = document.getElementById("authRevealAvatar");
+        const revGreeting = document.getElementById("authRevealGreeting");
+        const revSub = document.getElementById("authRevealSub");
+
+        if (prefersReducedMotion()) {
+          saveUser(null);
+          renderProfileScreen(false);
+          this.showToast("Berhasil keluar. Keranjang & favorit tetap aman.");
+          return;
+        }
+
+        profileScreen.animate([{ opacity: 1 }, { opacity: 0.2 }], { duration: 240 });
+        revAvatar.style.opacity = "0";
+        revGreeting.textContent = "Sampai jumpa!";
+        revGreeting.style.opacity = "1";
+        revGreeting.style.transform = "translate3d(0,0,0)";
+        revSub.textContent = "Keranjang & favoritmu tetap tersimpan";
+        revSub.style.opacity = "1";
+        revSub.style.transform = "translate3d(0,0,0)";
+
+        overlay.style.opacity = "1";
+        overlay.style.pointerEvents = "auto";
+
+        const viewport = document.getElementById("appViewport").getBoundingClientRect();
+        const maxRadius = Math.hypot(viewport.width, viewport.height) + 40;
+
+        await overlay.animate(
+          [
+            { clipPath: `circle(0px at 50% 50%)` },
+            { clipPath: `circle(${maxRadius}px at 50% 50%)` }
+          ],
+          { duration: 420, easing: "ease-out", fill: "forwards" }
+        ).finished;
+
+        saveUser(null);
+        renderProfileScreen(false);
+        await waitMs(380);
+
+        await overlay.animate(
+          [
+            { clipPath: `circle(${maxRadius}px at 50% 50%)`, opacity: 1 },
+            { clipPath: `circle(0px at 50% 50%)`, opacity: 0 }
+          ],
+          { duration: 400, easing: "ease-in", fill: "forwards" }
+        ).finished;
+
+        overlay.style.pointerEvents = "none";
+        profileScreen.style.opacity = "1";
+      },
+
+      openProductWithSharedTransition(productId, cardEl) {
+        const product = getProduct(productId);
+        if (!product) return;
+        state.selectedProductId = productId;
+        state.detailQty = 1;
+        state.detailAddons = {};
+        product.addons.forEach((a) => (state.detailAddons[a.id] = 0));
+
+        renderDetailScreen();
+        const detailScreen = document.getElementById("screen-detail");
+        const viewport = document.getElementById("appViewport");
+
+        if (!cardEl || prefersReducedMotion()) {
+          navigateTo("detail");
+          return;
+        }
+
+        const vpRect = viewport.getBoundingClientRect();
+        const cardRect = cardEl.getBoundingClientRect();
+        const clone = document.createElement("div");
+        clone.style.cssText = `
+          position: absolute;
+          left: ${cardRect.left - vpRect.left}px;
+          top: ${cardRect.top - vpRect.top}px;
+          width: ${cardRect.width}px;
+          height: ${cardRect.height}px;
+          border-radius: 24px;
+          background: #FFFFFF;
+          box-shadow: 0 22px 48px rgba(155, 10, 10, 0.24);
+          z-index: 300;
+          overflow: hidden;
+          pointer-events: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        `;
+        const img = document.createElement("img");
+        img.src = product.image;
+        img.style.cssText = "width: 78%; height: 78%; object-fit: cover; border-radius: 50%;";
+        clone.appendChild(img);
+        viewport.appendChild(clone);
+
+        clone.animate(
+          [
+            {
+              left: `${cardRect.left - vpRect.left}px`,
+              top: `${cardRect.top - vpRect.top}px`,
+              width: `${cardRect.width}px`,
+              height: `${cardRect.height}px`,
+              borderRadius: "24px",
+              opacity: 1
+            },
+            {
+              left: "0px",
+              top: "0px",
+              width: `${vpRect.width}px`,
+              height: `${vpRect.height}px`,
+              borderRadius: "0px",
+              opacity: 0.96
+            }
+          ],
+          { duration: 300, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
+        ).onfinish = () => {
+          navigateTo("detail");
+          detailScreen.animate([{ opacity: 0.4 }, { opacity: 1 }], { duration: 180 });
+          clone.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160 }).onfinish = () => clone.remove();
+        };
+      }
+    };
+
+    function waitMs(ms) {
+      return new Promise((res) => setTimeout(res, ms));
+    }
+
+    /* =========================================================================
+       6. MODUL AUTH (GOOGLE IDENTITY SERVICES, APPLE JS & MODE DEMO)
+       ========================================================================= */
+    function isGoogleConfigured() {
+      return Boolean(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID.trim().length > 10);
+    }
+
+    function isAppleConfigured() {
+      return Boolean(APPLE_CLIENT_ID && APPLE_CLIENT_ID.trim().length > 3);
+    }
+
+    function decodeJwtPayload(token) {
+      try {
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join("")
+        );
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function triggerModalError(message) {
+      const sheet = document.getElementById("modalSheet");
+      const errBox = document.getElementById("modalErrorBanner");
+      if (errBox) {
+        errBox.textContent = message;
+        errBox.classList.add("show");
+      }
+      if (sheet && !prefersReducedMotion()) {
+        sheet.classList.remove("shake");
+        void sheet.offsetWidth;
+        sheet.classList.add("shake");
+      }
+    }
+
+    function handleSocialAuthClick(provider, btnEl, event) {
+      Anim.addRipple(btnEl, event?.clientX, event?.clientY);
+      state.pendingAuthBtn = btnEl;
+
+      if (provider === "google" && isGoogleConfigured() && window.google?.accounts?.id) {
+        try {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: (response) => {
+              const payload = decodeJwtPayload(response.credential);
+              if (payload) {
+                Anim.runLoginChoreography(btnEl, {
+                  name: payload.name || "Pengguna Google",
+                  email: payload.email || "",
+                  photo: payload.picture || DEMO_ACCOUNTS.google[0].photo,
+                  provider: "google",
+                  isDemo: false
+                });
+              } else {
+                triggerModalError("Gagal memverifikasi token Google.");
+              }
+            }
+          });
+          window.google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              openDemoPickerSheet("google", btnEl);
+            }
+          });
+        } catch (err) {
+          triggerModalError("Layanan Google Sign-In sedang tidak tersedia.");
+        }
+        return;
+      }
+
+      if (provider === "apple" && isAppleConfigured() && window.AppleID?.auth) {
+        try {
+          window.AppleID.auth.init({
+            clientId: APPLE_CLIENT_ID,
+            scope: "name email",
+            redirectURI: APPLE_REDIRECT_URI,
+            usePopup: true
+          });
+          window.AppleID.auth
+            .signIn()
+            .then((res) => {
+              const firstName = res?.user?.name?.firstName || "Pengguna";
+              const lastName = res?.user?.name?.lastName || "Apple";
+              Anim.runLoginChoreography(btnEl, {
+                name: `${firstName} ${lastName}`.trim(),
+                email: res?.user?.email || "user@privaterelay.appleid.com",
+                photo: DEMO_ACCOUNTS.apple[0].photo,
+                provider: "apple",
+                isDemo: false
+              });
+            })
+            .catch(() => {
+              triggerModalError("Login dengan Apple dibatalkan atau gagal.");
+            });
+        } catch (err) {
+          triggerModalError("Gagal memuat Sign in with Apple.");
+        }
+        return;
+      }
+
+      // MODE DEMO OTOMATIS (jika Client ID belum diisi)
+      openDemoPickerSheet(provider, btnEl);
+    }
+
+    function openDemoPickerSheet(provider, originBtn) {
+      const accounts = DEMO_ACCOUNTS[provider] || DEMO_ACCOUNTS.google;
+      const providerName = provider === "apple" ? "Apple" : "Google";
+      const modal = document.getElementById("modalBackdrop");
+      const sheet = document.getElementById("modalSheet");
+
+      sheet.innerHTML = `
+        <div class="sheet-handle"></div>
+        <div class="modal-header">
+          <div>
+            <div style="font-size:11px;font-weight:800;color:var(--color-accent-dark);text-transform:uppercase;letter-spacing:0.06em;">Mode Demo Otomatis</div>
+            <h3 class="modal-title">Pilih Akun ${providerName}</h3>
+          </div>
+          <button class="icon-btn" id="btnCancelDemoAuth" aria-label="Tutup">✕</button>
+        </div>
+        <p style="font-size:12.5px;color:var(--color-text-muted);line-height:1.45;margin-bottom:14px;">
+          Client ID ${providerName} belum diisi di konfigurasi skrip, sehingga Bite menjalankan simulasi pemilih akun.
+        </p>
+        <div>
+          ${accounts
+            .map(
+              (acc, idx) => `
+              <button class="demo-account-row" data-demo-idx="${idx}">
+                <img src="${acc.photo}" alt="${acc.name}" />
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:14.5px;font-weight:800;">${acc.name}</div>
+                  <div style="font-size:12px;color:var(--color-text-muted);overflow:hidden;text-overflow:ellipsis;">${acc.email}</div>
+                </div>
+                <span style="font-size:12px;font-weight:800;color:var(--color-primary);">Pilih</span>
+              </button>
+            `
+            )
+            .join("")}
+        </div>
+        <button class="btn-secondary" id="btnSimulateCancelAuth" style="margin-top:6px;">Batalkan Login</button>
+      `;
+
+      modal.classList.add("open");
+      state.activeModal = "demo-picker";
+
+      sheet.querySelectorAll("[data-demo-idx]").forEach((row) => {
+        row.addEventListener("click", () => {
+          const acc = accounts[Number(row.dataset.demoIdx)];
+          // Kembali tampilkan modal login sebentar agar morph tombol terlihat mulus
+          openAuthModal(state.lastAuthMode || "login");
+          const targetBtn = document.querySelector(`.social-btn.${provider}`);
+          Anim.runLoginChoreography(targetBtn || originBtn, { ...acc, isDemo: true });
+        });
+      });
+
+      const cancelFn = () => {
+        openAuthModal(state.lastAuthMode || "login");
+        triggerModalError(`Masuk dengan ${providerName} dibatalkan oleh pengguna.`);
+      };
+      document.getElementById("btnCancelDemoAuth").addEventListener("click", cancelFn);
+      document.getElementById("btnSimulateCancelAuth").addEventListener("click", cancelFn);
+    }
+
+    /* =========================================================================
+       7. KOMPONEN UI & RENDERER LAYAR
+       ========================================================================= */
+    function initPromoCarousel() {
+      const track = document.getElementById("promoTrack");
+      const dots = document.getElementById("promoDots");
+
+      track.innerHTML = PROMOS.map(
+        (p, idx) => `
+          <div class="promo-slide ${p.theme}" data-promo-cat="${p.category}" data-idx="${idx}">
+            <div class="promo-circle-decor"></div>
+            <div class="promo-text">
+              <span class="promo-badge-50">${p.badge}</span>
+              <div class="promo-title">${p.title}</div>
+              <div class="promo-sub">${p.sub}</div>
+            </div>
+            <div class="promo-big-percent">${p.percent}</div>
+          </div>
+        `
+      ).join("");
+
+      dots.innerHTML = PROMOS.map(
+        (_, idx) => `<button class="promo-dot ${idx === 0 ? "active" : ""}" data-dot="${idx}" aria-label="Slide ${idx + 1}"></button>`
+      ).join("");
+
+      track.querySelectorAll(".promo-slide").forEach((slide) => {
+        slide.addEventListener("click", () => {
+          selectCategory(slide.dataset.promoCat);
+        });
+      });
+
+      dots.querySelectorAll(".promo-dot").forEach((dot) => {
+        dot.addEventListener("click", () => {
+          setPromoSlide(Number(dot.dataset.dot));
+        });
+      });
+
+      // Swipe support
+      let startX = 0;
+      track.addEventListener("touchstart", (e) => (startX = e.touches[0].clientX), { passive: true });
+      track.addEventListener("touchend", (e) => {
+        const diff = e.changedTouches[0].clientX - startX;
+        if (Math.abs(diff) > 36) {
+          const next = diff < 0 ? (state.promoIndex + 1) % PROMOS.length : (state.promoIndex - 1 + PROMOS.length) % PROMOS.length;
+          setPromoSlide(next);
+        }
+      });
+
+      setInterval(() => {
+        if (state.route === "home" && !state.activeModal) {
+          setPromoSlide((state.promoIndex + 1) % PROMOS.length);
+        }
+      }, 4200);
+    }
+
+    function setPromoSlide(index) {
+      state.promoIndex = index;
+      const track = document.getElementById("promoTrack");
+      track.style.transform = `translate3d(-${index * 100}%, 0, 0)`;
+      document.querySelectorAll(".promo-dot").forEach((d, idx) => {
+        d.classList.toggle("active", idx === index);
+      });
+    }
+
+    function initCategoryChips() {
+      const container = document.getElementById("categoryScroll");
+      const indicator = document.getElementById("categoryIndicator");
+
+      CATEGORIES.forEach((cat) => {
+        const btn = document.createElement("button");
+        btn.className = `cat-chip ${cat.id === state.activeCategory ? "active" : ""}`;
+        btn.dataset.cat = cat.id;
+        btn.innerHTML = `<span>${cat.icon}</span><span>${cat.label}</span>`;
+        btn.addEventListener("click", () => selectCategory(cat.id));
+        container.appendChild(btn);
+      });
+
+      requestAnimationFrame(() => moveCategoryIndicator());
+    }
+
+    function moveCategoryIndicator() {
+      const container = document.getElementById("categoryScroll");
+      const indicator = document.getElementById("categoryIndicator");
+      const activeBtn = container.querySelector(`.cat-chip[data-cat="${state.activeCategory}"]`);
+      if (!activeBtn || !indicator) return;
+      indicator.style.width = `${activeBtn.offsetWidth}px`;
+      indicator.style.transform = `translate3d(${activeBtn.offsetLeft}px, 0, 0)`;
+    }
+
+    function selectCategory(catId) {
+      if (state.activeCategory === catId) return;
+      state.activeCategory = catId;
+      document.querySelectorAll(".cat-chip").forEach((c) => {
+        c.classList.toggle("active", c.dataset.cat === catId);
+      });
+      moveCategoryIndicator();
+      const activeBtn = document.querySelector(`.cat-chip[data-cat="${catId}"]`);
+      if (activeBtn) activeBtn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      renderFoodGrid(true);
+    }
+
+    function renderFoodGrid(flipEffect = false) {
+      const grid = document.getElementById("foodGrid");
+      const titleEl = document.getElementById("menuSectionTitle");
+      const countEl = document.getElementById("menuSectionCount");
+
+      const items =
+        state.activeCategory === "Semua"
+          ? PRODUCTS
+          : PRODUCTS.filter((p) => p.category === state.activeCategory);
+
+      titleEl.textContent = state.activeCategory === "Semua" ? "Menu Populer" : `Menu ${state.activeCategory}`;
+      countEl.textContent = `${items.length} menu`;
+
+      if (flipEffect && !prefersReducedMotion()) {
+        grid.classList.remove("grid-flipping");
+        void grid.offsetWidth;
+        grid.classList.add("grid-flipping");
+      }
+
+      grid.innerHTML = items
+        .map((p, index) => {
+          const isFav = state.favorites.includes(p.id);
+          const delay = !state.homeAnimatedOnce ? index * 45 : 0;
+          return `
+            <article class="food-card ${!state.homeAnimatedOnce ? "stagger-in" : ""}" data-id="${p.id}" style="transition-delay:${delay}ms">
+              <button class="card-fav-btn ${isFav ? "liked" : ""}" data-fav-id="${p.id}" aria-label="Favoritkan ${p.name}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFav ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              </button>
+              <div class="card-img-stage">
+                <div class="skeleton-box"></div>
+                <div class="food-img-wrap">
+                  <img class="food-img-float" src="${p.image}" alt="${p.name}" loading="lazy" style="animation-delay:${(index % 4) * -0.9}s" />
+                </div>
+              </div>
+              <div>
+                <h3 class="card-name">${p.name}</h3>
+                <div class="card-weight">${p.weight} • ${p.category}</div>
+                <div class="card-footer">
+                  <span class="card-price">${formatRp(p.price)}</span>
+                  <button class="card-add-btn" data-quick-add="${p.id}" aria-label="Tambah ${p.name} ke keranjang">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+
+      // Skeleton load & fallback handling + 3D tilt + handlers
+      grid.querySelectorAll(".food-card").forEach((card) => {
+        const id = card.dataset.id;
+        const img = card.querySelector(".food-img-float");
+        const skel = card.querySelector(".skeleton-box");
+        const wrap = card.querySelector(".food-img-wrap");
+
+        const finishLoad = () => {
+          img.classList.add("loaded");
+          if (skel) skel.classList.add("hidden");
+        };
+        if (img.complete && img.naturalWidth > 0) finishLoad();
+        img.addEventListener("load", finishLoad);
+        img.addEventListener("error", () => {
+          img.src = createFoodFallbackSvg(getProduct(id));
+          finishLoad();
+        });
+
+        // 3D Tilt mengikuti kursor / sentuhan
+        if (!prefersReducedMotion()) {
+          const applyTilt = (clientX, clientY) => {
+            const r = card.getBoundingClientRect();
+            const nx = ((clientX - r.left) / r.width - 0.5) * 2;
+            const ny = ((clientY - r.top) / r.height - 0.5) * 2;
+            wrap.style.transform = `perspective(500px) rotateY(${nx * 8}deg) rotateX(${-ny * 8}deg) scale(1.04)`;
+          };
+          const resetTilt = () => (wrap.style.transform = "");
+          card.addEventListener("pointermove", (e) => applyTilt(e.clientX, e.clientY));
+          card.addEventListener("pointerleave", resetTilt);
+          card.addEventListener("touchend", resetTilt);
+        }
+
+        card.addEventListener("click", (e) => {
+          if (e.target.closest("[data-fav-id]") || e.target.closest("[data-quick-add]")) return;
+          Anim.openProductWithSharedTransition(id, card);
+        });
+      });
+
+      grid.querySelectorAll("[data-fav-id]").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleFavorite(btn.dataset.favId, btn);
+        });
+      });
+
+      grid.querySelectorAll("[data-quick-add]").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const p = getProduct(btn.dataset.quickAdd);
+          addToCart(p.id, 1, []);
+          Anim.flyToCart(btn, p.image);
+          Anim.showToast(`${p.name} masuk keranjang`);
+        });
+      });
+
+      if (!state.homeAnimatedOnce) {
+        requestAnimationFrame(() => {
+          grid.querySelectorAll(".stagger-in").forEach((c) => {
+            c.classList.add("stagger-shown");
+          });
+        });
+        state.homeAnimatedOnce = true;
+      }
+    }
+
+    function createFoodFallbackSvg(product) {
+      const label = encodeURIComponent(product ? product.category : "Bite");
+      return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="260" viewBox="0 0 300 260"><rect width="300" height="260" fill="%23FFF4E0"/><circle cx="150" cy="120" r="70" fill="%239B0A0A"/><text x="150" y="130" text-anchor="middle" fill="%23FFB21A" font-family="sans-serif" font-weight="800" font-size="24">${label}</text></svg>`;
+    }
+
+    function toggleFavorite(productId, btnEl) {
+      const idx = state.favorites.indexOf(productId);
+      const adding = idx === -1;
+      if (adding) {
+        state.favorites.push(productId);
+        if (btnEl) {
+          btnEl.classList.add("liked", "pop");
+          const svg = btnEl.querySelector("svg");
+          if (svg) svg.setAttribute("fill", "currentColor");
+          Anim.heartParticleBurst(btnEl);
+          setTimeout(() => btnEl.classList.remove("pop"), 450);
+        }
+        Anim.bounceBadge(document.getElementById("favBadge"));
+      } else {
+        state.favorites.splice(idx, 1);
+        if (btnEl) {
+          btnEl.classList.remove("liked");
+          const svg = btnEl.querySelector("svg");
+          if (svg) svg.setAttribute("fill", "none");
+        }
+      }
+      saveFavorites();
+      if (state.route === "home") {
+        // Sinkron jika dipicu dari tempat lain
+      }
+    }
+
+    function addToCart(productId, qty, selectedAddons) {
+      const normalized = (selectedAddons || [])
+        .filter((a) => a.qty > 0)
+        .sort((a, b) => a.id.localeCompare(b.id));
+      const key = `${productId}__${normalized.map((a) => `${a.id}:${a.qty}`).join(",")}`;
+
+      const existing = state.cart.find((c) => c.key === key);
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        state.cart.push({
+          key,
+          productId,
+          qty,
+          addons: normalized
+        });
+      }
+      saveCart();
+    }
+
+    function updateNavBadges() {
+      const cartCount = getCartCount();
+      const favCount = state.favorites.length;
+      const cartBadge = document.getElementById("cartBadge");
+      const favBadge = document.getElementById("favBadge");
+
+      cartBadge.textContent = cartCount > 99 ? "99+" : String(cartCount);
+      cartBadge.classList.toggle("empty", cartCount === 0);
+
+      favBadge.textContent = favCount > 99 ? "99+" : String(favCount);
+      favBadge.classList.toggle("empty", favCount === 0);
+    }
+
+    function updateBottomNavPill(tabName) {
+      const index = TAB_ORDER.indexOf(tabName);
+      if (index === -1) return;
+      const pill = document.getElementById("navActivePill");
+      pill.style.transform = `translate3d(${index * 100}%, 0, 0)`;
+      document.querySelectorAll(".nav-item").forEach((el) => {
+        el.classList.toggle("active", el.dataset.tab === tabName);
+      });
+    }
+
+    /* --- Render 3. Detail Produk --- */
+    function renderDetailScreen() {
+      const screen = document.getElementById("screen-detail");
+      const p = getProduct(state.selectedProductId);
+      if (!p) return;
+      const isFav = state.favorites.includes(p.id);
+
+      const calcUnitTotal = () => {
+        const addonSum = p.addons.reduce((sum, a) => sum + (state.detailAddons[a.id] || 0) * a.price, 0);
+        return (p.price + addonSum) * state.detailQty;
+      };
+
+      screen.innerHTML = `
+        <div class="sub-topbar transparent">
+          <button class="icon-btn" id="detailBackBtn" aria-label="Kembali">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <button class="icon-btn ${isFav ? "liked" : ""}" id="detailFavBtn" style="color:${isFav ? "var(--color-primary)" : "var(--color-text)"}" aria-label="Favorit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="${isFav ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2.2">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="detail-hero">
+          <div class="detail-red-circle"></div>
+          <div class="detail-photo-frame">
+            <img src="${p.image}" alt="${p.name}" onerror="this.src='${createFoodFallbackSvg(p)}'" />
+          </div>
+        </div>
+
+        <div class="detail-body">
+          <div class="detail-head">
+            <div>
+              <h1 class="detail-name">${p.name}</h1>
+              <span class="detail-weight">${p.weight} • ${p.category}</span>
+            </div>
+            <div class="detail-price">${formatRp(p.price)}</div>
+          </div>
+
+          <div class="detail-section-label">Bahan-bahan</div>
+          <div class="ingredients-list">
+            ${p.ingredients.map((ing) => `<span class="ingredient-tag">${ing}</span>`).join("")}
+          </div>
+
+          <div class="detail-section-label">Tambahan (Add-on)</div>
+          <div class="addon-list">
+            ${p.addons
+              .map(
+                (a) => `
+                <div class="addon-row">
+                  <div>
+                    <div class="addon-name">${a.name}</div>
+                    <div class="addon-price">+ ${formatRp(a.price)}</div>
+                  </div>
+                  <div class="stepper">
+                    <button class="step-btn" data-addon-dec="${a.id}" aria-label="Kurangi ${a.name}">−</button>
+                    <span class="step-val" id="addonVal-${a.id}">${state.detailAddons[a.id] || 0}</span>
+                    <button class="step-btn plus" data-addon-inc="${a.id}" aria-label="Tambah ${a.name}">+</button>
+                  </div>
+                </div>
+              `
+              )
+              .join("")}
+          </div>
+        </div>
+
+        <div class="detail-bottom-bar">
+          <div class="stepper" style="padding:6px;background:var(--color-input);box-shadow:none;">
+            <button class="step-btn" id="detailQtyDec" style="background:var(--color-white);" aria-label="Kurangi jumlah">−</button>
+            <span class="step-val" id="detailQtyVal" style="min-width:24px;">${state.detailQty}</span>
+            <button class="step-btn plus" id="detailQtyInc" aria-label="Tambah jumlah">+</button>
+          </div>
+          <button class="btn-primary" id="btnAddDetailToCart" style="flex:1;">
+            Ke keranjang – <span id="detailBtnTotal">${formatRp(calcUnitTotal())}</span>
+          </button>
+        </div>
+      `;
+
+      const refreshPrices = () => {
+        document.getElementById("detailQtyVal").textContent = state.detailQty;
+        document.getElementById("detailBtnTotal").textContent = formatRp(calcUnitTotal());
+        p.addons.forEach((a) => {
+          document.getElementById(`addonVal-${a.id}`).textContent = state.detailAddons[a.id] || 0;
+        });
+      };
+
+      document.getElementById("detailBackBtn").addEventListener("click", goBack);
+
+      document.getElementById("detailFavBtn").addEventListener("click", (e) => {
+        const btn = e.currentTarget;
+        toggleFavorite(p.id, btn);
+        const likedNow = state.favorites.includes(p.id);
+        btn.style.color = likedNow ? "var(--color-primary)" : "var(--color-text)";
+      });
+
+      p.addons.forEach((a) => {
+        screen.querySelector(`[data-addon-inc="${a.id}"]`).addEventListener("click", () => {
+          state.detailAddons[a.id] = Math.min(5, (state.detailAddons[a.id] || 0) + 1);
+          refreshPrices();
+        });
+        screen.querySelector(`[data-addon-dec="${a.id}"]`).addEventListener("click", () => {
+          state.detailAddons[a.id] = Math.max(0, (state.detailAddons[a.id] || 0) - 1);
+          refreshPrices();
+        });
+      });
+
+      document.getElementById("detailQtyInc").addEventListener("click", () => {
+        state.detailQty = Math.min(20, state.detailQty + 1);
+        refreshPrices();
+      });
+
+      document.getElementById("detailQtyDec").addEventListener("click", () => {
+        state.detailQty = Math.max(1, state.detailQty - 1);
+        refreshPrices();
+      });
+
+      document.getElementById("btnAddDetailToCart").addEventListener("click", () => {
+        const selectedAddons = p.addons
+          .filter((a) => (state.detailAddons[a.id] || 0) > 0)
+          .map((a) => ({ id: a.id, name: a.name, price: a.price, qty: state.detailAddons[a.id] }));
+        addToCart(p.id, state.detailQty, selectedAddons);
+        Anim.showToast(`${p.name} ditambahkan ke keranjang!`);
+        goBack();
+        requestAnimationFrame(() => Anim.bounceBadge(document.getElementById("cartBadge")));
+      });
+    }
+
+    /* --- Render 4. Keranjang --- */
+    function renderCartScreen() {
+      const screen = document.getElementById("screen-cart");
+      const subtotal = getCartSubtotal();
+
+      if (state.cart.length === 0) {
+        screen.innerHTML = `
+          <div class="sub-topbar">
+            <h1 class="sub-title">Keranjang</h1>
+            <span class="section-count">0 item</span>
+          </div>
+          <div class="empty-state">
+            <div class="empty-icon-circle">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="20" r="1.5" fill="currentColor"/>
+                <circle cx="17" cy="20" r="1.5" fill="currentColor"/>
+                <path d="M3 4h2l2.4 10.5a1.5 1.5 0 001.5 1.2h8.6a1.5 1.5 0 001.4-1.1L21 7H6"/>
+              </svg>
+            </div>
+            <div class="empty-title">Keranjang masih kosong</div>
+            <p class="empty-desc">Pilih burger, pizza, sushi, atau minuman favoritmu dari beranda sekarang.</p>
+            <button class="btn-primary" id="btnExploreFromCart" style="max-width:220px;margin-top:8px;">Jelajahi Menu</button>
+          </div>
+        `;
+        document.getElementById("btnExploreFromCart").addEventListener("click", () => navigateTo("home"));
+        return;
+      }
+
+      screen.innerHTML = `
+        <div class="sub-topbar">
+          <h1 class="sub-title">Keranjang</h1>
+          <span class="section-count">${getCartCount()} item</span>
+        </div>
+        <div class="list-stack">
+          ${state.cart
+            .map((item) => {
+              const p = getProduct(item.productId);
+              if (!p) return "";
+              const addonsText = (item.addons || []).map((a) => `${a.name} (×${a.qty})`).join(", ");
+              const itemTotal =
+                (p.price + (item.addons || []).reduce((s, a) => s + a.price * a.qty, 0)) * item.qty;
+              return `
+                <div class="cart-card" data-cart-key="${item.key}">
+                  <img class="cart-thumb" src="${p.image}" alt="${p.name}" onerror="this.src='${createFoodFallbackSvg(p)}'" />
+                  <div class="cart-info">
+                    <div class="cart-name">${p.name}</div>
+                    <div class="cart-addons">${addonsText || p.weight}</div>
+                    <div class="cart-price-row">
+                      <span class="cart-price">${formatRp(itemTotal)}</span>
+                      <div class="stepper">
+                        <button class="step-btn" data-cart-dec="${item.key}" aria-label="Kurangi">−</button>
+                        <span class="step-val">${item.qty}</span>
+                        <button class="step-btn plus" data-cart-inc="${item.key}" aria-label="Tambah">+</button>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="trash-btn" data-cart-del="${item.key}" aria-label="Hapus ${p.name}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3 0V4a1 1 0 011-1h6a1 1 0 011 1v2"/>
+                    </svg>
+                  </button>
+                </div>
+              `;
+            })
+            .join("")}
+        </div>
+        <div class="cart-cta-wrap">
+          <div class="checkout-block" style="margin:0 0 14px;">
+            <div class="summary-line"><span>Subtotal</span><span>${formatRp(subtotal)}</span></div>
+            <div class="summary-line free"><span>Ongkos Kirim</span><strong>Gratis</strong></div>
+            <div class="summary-total"><span>Total</span><span>${formatRp(subtotal)}</span></div>
+          </div>
+          <button class="btn-primary" id="btnProceedCheckout">
+            Pesan sekarang – ${formatRp(subtotal)}
+          </button>
+        </div>
+      `;
+
+      screen.querySelectorAll("[data-cart-inc]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const item = state.cart.find((c) => c.key === b.dataset.cartInc);
+          if (item) {
+            item.qty += 1;
+            saveCart();
+            renderCartScreen();
+          }
+        });
+      });
+
+      screen.querySelectorAll("[data-cart-dec]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const idx = state.cart.findIndex((c) => c.key === b.dataset.cartDec);
+          if (idx > -1) {
+            if (state.cart[idx].qty > 1) state.cart[idx].qty -= 1;
+            else state.cart.splice(idx, 1);
+            saveCart();
+            renderCartScreen();
+          }
+        });
+      });
+
+      screen.querySelectorAll("[data-cart-del]").forEach((b) => {
+        b.addEventListener("click", () => {
+          state.cart = state.cart.filter((c) => c.key !== b.dataset.cartDel);
+          saveCart();
+          renderCartScreen();
+          Anim.showToast("Item dihapus dari keranjang");
+        });
+      });
+
+      document.getElementById("btnProceedCheckout").addEventListener("click", () => {
+        navigateTo("checkout");
+      });
+    }
+
+    /* --- Render 5. Favorit --- */
+    function renderFavoritesScreen() {
+      const screen = document.getElementById("screen-favorites");
+      const favProducts = state.favorites.map(getProduct).filter(Boolean);
+
+      if (favProducts.length === 0) {
+        screen.innerHTML = `
+          <div class="sub-topbar">
+            <h1 class="sub-title">Favorit</h1>
+            <span class="section-count">0 item</span>
+          </div>
+          <div class="empty-state">
+            <div class="empty-icon-circle">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <div class="empty-title">Belum ada menu favorit</div>
+            <p class="empty-desc">Ketuk ikon hati pada kartu makanan untuk menyimpannya di sini.</p>
+            <button class="btn-primary" id="btnExploreFromFav" style="max-width:220px;margin-top:8px;">Lihat Menu</button>
+          </div>
+        `;
+        document.getElementById("btnExploreFromFav").addEventListener("click", () => navigateTo("home"));
+        return;
+      }
+
+      screen.innerHTML = `
+        <div class="sub-topbar">
+          <h1 class="sub-title">Favorit</h1>
+          <span class="section-count">${favProducts.length} item</span>
+        </div>
+        <div class="list-stack">
+          ${favProducts
+            .map(
+              (p) => `
+              <div class="cart-card" data-fav-card="${p.id}">
+                <img class="cart-thumb" src="${p.image}" alt="${p.name}" onerror="this.src='${createFoodFallbackSvg(p)}'" />
+                <div class="cart-info" data-open-fav="${p.id}" style="cursor:pointer;">
+                  <div class="cart-name">${p.name}</div>
+                  <div class="cart-addons">${p.weight} • ${p.category}</div>
+                  <div class="cart-price">${formatRp(p.price)}</div>
+                </div>
+                <button class="card-add-btn" data-fav-cart="${p.id}" aria-label="Tambah ke keranjang">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </button>
+                <button class="trash-btn" data-fav-remove="${p.id}" aria-label="Hapus dari favorit">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3 0V4a1 1 0 011-1h6a1 1 0 011 1v2"/>
+                  </svg>
+                </button>
+              </div>
+            `
+            )
+            .join("")}
+        </div>
+      `;
+
+      screen.querySelectorAll("[data-open-fav]").forEach((el) => {
+        el.addEventListener("click", () => {
+          Anim.openProductWithSharedTransition(el.dataset.openFav, el.closest(".cart-card"));
+        });
+      });
+
+      screen.querySelectorAll("[data-fav-cart]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const p = getProduct(btn.dataset.favCart);
+          addToCart(p.id, 1, []);
+          Anim.flyToCart(btn, p.image);
+          Anim.showToast(`${p.name} masuk keranjang`);
+        });
+      });
+
+      screen.querySelectorAll("[data-fav-remove]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.favorites = state.favorites.filter((id) => id !== btn.dataset.favRemove);
+          saveFavorites();
+          renderFavoritesScreen();
+          if (state.route === "home") renderFoodGrid(false);
+        });
+      });
+    }
+
+    /* --- Render 6. Profil --- */
+    function renderProfileScreen(staggerRows = false) {
+      const screen = document.getElementById("screen-profile");
+
+      const menuItems = [
+        { id: "orders", label: "Daftar pesanan", icon: "🧾" },
+        { id: "discounts", label: "Diskon & bonus", icon: "🎁" },
+        { id: "addresses", label: "Alamat saya", icon: "📍" },
+        { id: "cards", label: "Kartu saya", icon: "💳" },
+        { id: "settings", label: "Pengaturan", icon: "⚙️" },
+        { id: "contact", label: "Kontak", icon: "💬" }
+      ];
+
+      if (!state.user) {
+        screen.innerHTML = `
+          <div class="sub-topbar">
+            <h1 class="sub-title">Profil</h1>
+          </div>
+          <div class="profile-guest-card">
+            <div class="profile-guest-badge">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12a4.5 4.5 0 100-9 4.5 4.5 0 000 9zm0 2c-4.42 0-8 2.24-8 5v1.5h16V19c0-2.76-3.58-5-8-5z"/>
+              </svg>
+            </div>
+            <h2 style="font-size:19px;font-weight:800;">Masuk ke Akun Bite</h2>
+            <p style="font-size:13px;color:var(--color-text-muted);line-height:1.45;">
+              Simpan alamat pengiriman, klaim voucher diskon 50%, dan pantau status pesananmu.
+            </p>
+            <div style="display:flex;gap:10px;width:100%;margin-top:6px;">
+              <button class="btn-primary" id="btnOpenRegister" style="flex:1;">Daftar</button>
+              <button class="btn-secondary" id="btnOpenLogin" style="flex:1;border:1.5px solid #E0E0E0;background:#FFF;">Masuk</button>
+            </div>
+          </div>
+          <div class="profile-menu">
+            ${menuItems
+              .map(
+                (m) => `
+                <button class="profile-menu-item" data-profile-menu="${m.id}">
+                  <div class="profile-menu-left">
+                    <span class="profile-menu-icon">${m.icon}</span>
+                    <span>${m.label}</span>
+                  </div>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              `
+              )
+              .join("")}
+          </div>
+        `;
+        document.getElementById("btnOpenRegister").addEventListener("click", () => openAuthModal("register"));
+        document.getElementById("btnOpenLogin").addEventListener("click", () => openAuthModal("login"));
+      } else {
+        const providerLabel =
+          state.user.provider === "google"
+            ? "Terhubung dengan Google"
+            : state.user.provider === "apple"
+            ? "Terhubung dengan Apple"
+            : "Akun Ponsel Bite";
+
+        screen.innerHTML = `
+          <div class="sub-topbar">
+            <h1 class="sub-title">Profil</h1>
+          </div>
+          <div class="profile-user-header">
+            <img class="profile-avatar" id="profileAvatarImg" src="${state.user.photo}" alt="${state.user.name}" />
+            <div style="min-width:0;">
+              <div class="profile-name">${state.user.name}</div>
+              <div class="profile-email">${state.user.email || state.user.phone}</div>
+              <span class="profile-provider-chip">${providerLabel}${state.user.isDemo ? " • Demo" : ""}</span>
+            </div>
+          </div>
+          <div class="profile-menu">
+            ${menuItems
+              .map(
+                (m, i) => `
+                <button class="profile-menu-item ${staggerRows ? "stagger-row" : ""}" data-profile-menu="${m.id}" style="${staggerRows ? `transition-delay:${i * 60}ms` : ""}">
+                  <div class="profile-menu-left">
+                    <span class="profile-menu-icon">${m.icon}</span>
+                    <span>${m.label}</span>
+                  </div>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              `
+              )
+              .join("")}
+            <button class="profile-menu-item logout ${staggerRows ? "stagger-row" : ""}" id="btnLogout" style="${staggerRows ? `transition-delay:${menuItems.length * 60}ms` : ""}">
+              <div class="profile-menu-left">
+                <span class="profile-menu-icon">🚪</span>
+                <span>Keluar</span>
+              </div>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        `;
+
+        if (staggerRows) {
+          requestAnimationFrame(() => {
+            screen.querySelectorAll(".stagger-row").forEach((r) => r.classList.add("shown"));
+          });
+        }
+
+        document.getElementById("btnLogout").addEventListener("click", () => {
+          Anim.runLogoutChoreography();
+        });
+      }
+
+      screen.querySelectorAll("[data-profile-menu]").forEach((btn) => {
+        btn.addEventListener("click", () => openProfileSubSheet(btn.dataset.profileMenu));
+      });
+    }
+
+    /* --- 7. Modal Daftar & Masuk --- */
+    function openAuthModal(mode = "login") {
+      state.lastAuthMode = mode;
+      const modal = document.getElementById("modalBackdrop");
+      const sheet = document.getElementById("modalSheet");
+      const isRegister = mode === "register";
+
+      sheet.innerHTML = `
+        <div class="sheet-handle"></div>
+        <div class="modal-header">
+          <h3 class="modal-title">${isRegister ? "Daftar Akun Bite" : "Masuk ke Bite"}</h3>
+          <button class="icon-btn" id="btnCloseModal" aria-label="Tutup modal">✕</button>
+        </div>
+
+        <div class="modal-error-banner" id="modalErrorBanner"></div>
+
+        <form id="authForm" novalidate>
+          ${
+            isRegister
+              ? `
+            <div class="form-group">
+              <label class="form-label" for="authNameInput">Nama Lengkap</label>
+              <input class="input-field" id="authNameInput" type="text" placeholder="Contoh: Raka Pratama" autocomplete="name" />
+            </div>
+          `
+              : ""
+          }
+          <div class="form-group">
+            <label class="form-label" for="authPhoneInput">Nomor Telepon</label>
+            <input class="input-field" id="authPhoneInput" type="tel" placeholder="0812-3456-7890" autocomplete="tel" />
+          </div>
+          <button type="submit" class="btn-primary auth-submit-btn" style="margin-top:4px;">
+            ${isRegister ? "Daftar" : "Masuk"}
+          </button>
+        </form>
+
+        <div class="divider-or">atau lanjutkan dengan</div>
+
+        <div class="social-stack">
+          <button type="button" class="social-btn google" id="btnGoogleAuth">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M12 5c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 1.09 14.97 0 12 0 7.31 0 3.25 2.69 1.25 6.6l3.66 2.84C5.77 6.86 8.63 5 12 5z"/>
+              <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58l3.7 2.87c2.16-2 3.72-4.94 3.72-8.69z"/>
+              <path fill="#FBBC05" d="M4.91 14.56A7.18 7.18 0 014.52 12c0-.89.15-1.75.39-2.56L1.25 6.6A11.97 11.97 0 000 12c0 1.94.46 3.77 1.25 5.4l3.66-2.84z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.7-2.87c-1.08.72-2.45 1.16-4.23 1.16-3.37 0-6.23-1.86-7.09-4.44L1.25 17.4C3.25 21.31 7.31 24 12 24z"/>
+            </svg>
+            <span>Lanjutkan dengan Google</span>
+          </button>
+
+          <button type="button" class="social-btn apple" id="btnAppleAuth">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M16.37 1.6c0 1.14-.42 2.2-1.18 2.98-.8.82-1.92 1.38-3.04 1.3-.14-1.12.39-2.26 1.14-3.02.77-.8 2.02-1.36 3.08-1.26zm4.09 15.16c-.53 1.19-.79 1.72-1.48 2.78-.96 1.48-2.31 3.33-3.99 3.35-1.49.02-1.88-.96-3.9-.95-2.02.01-2.45.97-3.94.95-1.68-.02-2.96-1.69-3.92-3.17-2.69-4.13-2.98-8.97-1.31-11.53 1.18-1.81 3.05-2.87 4.8-2.87 1.78 0 2.9.97 4.38.97 1.44 0 2.31-.97 4.37-.97 1.56 0 3.21.85 4.39 2.31-3.85 2.11-3.22 7.6.6 9.13z"/>
+            </svg>
+            <span>Lanjutkan dengan Apple</span>
+          </button>
+        </div>
+
+        <div style="text-align:center;margin-top:16px;font-size:13px;font-weight:600;color:var(--color-text-muted);">
+          ${
+            isRegister
+              ? `Sudah punya akun? <button type="button" id="btnSwitchToLogin" style="color:var(--color-primary);font-weight:800;">Masuk</button>`
+              : `Belum punya akun? <button type="button" id="btnSwitchToReg" style="color:var(--color-primary);font-weight:800;">Daftar</button>`
+          }
+        </div>
+      `;
+
+      modal.classList.add("open");
+      state.activeModal = mode;
+
+      document.getElementById("btnCloseModal").addEventListener("click", closeModal);
+      const swLogin = document.getElementById("btnSwitchToLogin");
+      const swReg = document.getElementById("btnSwitchToReg");
+      if (swLogin) swLogin.addEventListener("click", () => openAuthModal("login"));
+      if (swReg) swReg.addEventListener("click", () => openAuthModal("register"));
+
+      document.getElementById("authForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const phone = document.getElementById("authPhoneInput").value.trim();
+        const nameInput = document.getElementById("authNameInput");
+        const name = nameInput ? nameInput.value.trim() : "";
+
+        if (isRegister && name.length < 2) {
+          triggerModalError("Mohon isi nama lengkap minimal 2 karakter.");
+          return;
+        }
+        if (phone.replace(/\D/g, "").length < 8) {
+          triggerModalError("Masukkan nomor telepon yang valid (min. 8 digit).");
+          return;
+        }
+
+        const displayName = isRegister ? name : `Sahabat Bite (${phone.slice(-4)})`;
+        const submitBtn = sheet.querySelector(".auth-submit-btn");
+        Anim.runLoginChoreography(submitBtn, {
+          name: displayName,
+          email: `${phone}@bite.id`,
+          phone,
+          photo: DEMO_ACCOUNTS.google[0].photo,
+          provider: "phone",
+          isDemo: false
+        });
+      });
+
+      document.getElementById("btnGoogleAuth").addEventListener("click", (e) => {
+        handleSocialAuthClick("google", e.currentTarget, e);
+      });
+      document.getElementById("btnAppleAuth").addEventListener("click", (e) => {
+        handleSocialAuthClick("apple", e.currentTarget, e);
+      });
+    }
+
+    function closeModal(immediate = false) {
+      const modal = document.getElementById("modalBackdrop");
+      modal.classList.remove("open");
+      state.activeModal = null;
+      if (immediate) {
+        modal.style.transition = "none";
+        requestAnimationFrame(() => (modal.style.transition = ""));
+      }
+    }
+
+    /* --- 8. Checkout & Sukses Pesanan --- */
+    function renderCheckoutScreen() {
+      const screen = document.getElementById("screen-checkout");
+      const subtotal = getCartSubtotal();
+      const methods = [
+        { id: "QRIS", name: "QRIS Instan", sub: "GoPay, OVO, Dana, ShopeePay" },
+        { id: "Transfer Bank", name: "Transfer Bank", sub: "BCA, Mandiri, BRI, BNI" },
+        { id: "Kartu", name: "Kartu Debit/Kredit", sub: "Visa & Mastercard" },
+        { id: "Tunai (COD)", name: "Tunai (COD)", sub: "Bayar saat kurir tiba" }
+      ];
+
+      screen.innerHTML = `
+        <div class="sub-topbar">
+          <button class="icon-btn" id="checkoutBackBtn" aria-label="Kembali">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <h1 class="sub-title">Checkout</h1>
+          <div style="width:44px;"></div>
+        </div>
+
+        <div class="checkout-block">
+          <div class="checkout-block-title">📍 Alamat Pengiriman</div>
+          <textarea class="input-field" id="checkoutAddressInput" rows="2" style="resize:none;padding-top:10px;">${state.address}</textarea>
+        </div>
+
+        <div class="checkout-block">
+          <div class="checkout-block-title">💳 Metode Pembayaran</div>
+          <div class="pay-options">
+            ${methods
+              .map(
+                (m) => `
+                <button type="button" class="pay-option ${state.paymentMethod === m.id ? "selected" : ""}" data-pay="${m.id}">
+                  <div class="pay-name">${m.name}</div>
+                  <div class="pay-sub">${m.sub}</div>
+                </button>
+              `
+              )
+              .join("")}
+          </div>
+        </div>
+
+        <div class="checkout-block">
+          <div class="checkout-block-title">🧾 Rincian Pembayaran</div>
+          <div class="summary-line"><span>Subtotal (${getCartCount()} item)</span><span>${formatRp(subtotal)}</span></div>
+          <div class="summary-line free"><span>Ongkos Kirim</span><strong>Gratis</strong></div>
+          <div class="summary-total"><span>Total Bayar</span><span>${formatRp(subtotal)}</span></div>
+        </div>
+
+        <div class="cart-cta-wrap" style="padding-top:8px;">
+          <button class="btn-primary" id="btnPayOrder">Bayar • ${formatRp(subtotal)}</button>
+        </div>
+      `;
+
+      document.getElementById("checkoutBackBtn").addEventListener("click", goBack);
+      screen.querySelectorAll("[data-pay]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.paymentMethod = btn.dataset.pay;
+          screen.querySelectorAll("[data-pay]").forEach((x) => x.classList.toggle("selected", x === btn));
+        });
+      });
+
+      document.getElementById("btnPayOrder").addEventListener("click", () => {
+        const addr = document.getElementById("checkoutAddressInput").value.trim();
+        if (addr.length < 6) {
+          Anim.showToast("Mohon isi alamat pengiriman lengkap");
+          return;
+        }
+        state.address = addr;
+        safeStorage.set(STORAGE_KEYS.ADDRESS, addr);
+
+        const order = {
+          id: "BT-" + Math.floor(100000 + Math.random() * 900000),
+          date: new Date().toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+          itemsCount: getCartCount(),
+          total: subtotal,
+          address: addr,
+          paymentMethod: state.paymentMethod,
+          status: "Sedang Disiapkan"
+        };
+        state.orders.unshift(order);
+        state.lastOrder = order;
+        safeStorage.set(STORAGE_KEYS.ORDERS, state.orders);
+
+        state.cart = [];
+        saveCart();
+        navigateTo("success");
+        Anim.launchConfetti();
+      });
+    }
+
+    function renderSuccessScreen() {
+      const screen = document.getElementById("screen-success");
+      const order = state.lastOrder || { id: "BT-884210", total: 0, paymentMethod: "QRIS", address: state.address };
+
+      screen.innerHTML = `
+        <div class="success-screen-wrap">
+          <div class="success-circle">
+            <svg class="btn-check-svg" width="46" height="46" viewBox="0 0 24 24" fill="none">
+              <path d="M5 13l4 4L19 7" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h1 style="font-size:24px;font-weight:800;margin-top:6px;">Pesanan Berhasil!</h1>
+          <p style="font-size:13.5px;color:var(--color-text-muted);line-height:1.5;max-width:290px;">
+            Dapur Bite sedang menyiapkan hidanganmu. Estimasi tiba dalam <strong>20–30 menit</strong>.
+          </p>
+          <div class="checkout-block" style="width:100%;margin:6px 0;text-align:left;">
+            <div class="summary-line"><span>Kode Pesanan</span><strong style="color:var(--color-text);">#${order.id}</strong></div>
+            <div class="summary-line"><span>Metode Bayar</span><strong style="color:var(--color-text);">${order.paymentMethod}</strong></div>
+            <div class="summary-total"><span>Total Dibayar</span><span>${formatRp(order.total)}</span></div>
+          </div>
+          <button class="btn-primary" id="btnSuccessHome">Kembali ke Beranda</button>
+          <button class="btn-secondary" id="btnSuccessOrders">Lihat Daftar Pesanan</button>
+        </div>
+      `;
+
+      document.getElementById("btnSuccessHome").addEventListener("click", () => {
+        state.history = ["home"];
+        navigateTo("home", { pushHistory: false });
+      });
+      document.getElementById("btnSuccessOrders").addEventListener("click", () => {
+        state.history = ["profile"];
+        navigateTo("profile", { pushHistory: false });
+        openProfileSubSheet("orders");
+      });
+    }
+
+    /* --- Modal Pendukung (Menu Cepat, Lokasi, Sub-menu Profil) --- */
+    function openLocationSheet() {
+      const modal = document.getElementById("modalBackdrop");
+      const sheet = document.getElementById("modalSheet");
+      sheet.innerHTML = `
+        <div class="sheet-handle"></div>
+        <div class="modal-header">
+          <h3 class="modal-title">Lokasi Pengiriman</h3>
+          <button class="icon-btn" id="btnCloseLoc">✕</button>
+        </div>
+        ${LOCATIONS.map(
+          (loc) => `
+          <button class="demo-account-row" data-pick-loc="${loc}" style="background:${state.address === loc ? "#FFF7EB" : "var(--color-input)"};border:1.5px solid ${state.address === loc ? "var(--color-primary)" : "transparent"}">
+            <span style="font-size:18px;">📍</span>
+            <span style="font-size:13.5px;font-weight:700;flex:1;">${loc}</span>
+          </button>
+        `
+        ).join("")}
+      `;
+      modal.classList.add("open");
+      state.activeModal = "location";
+      document.getElementById("btnCloseLoc").addEventListener("click", closeModal);
+      sheet.querySelectorAll("[data-pick-loc]").forEach((b) => {
+        b.addEventListener("click", () => {
+          state.address = b.dataset.pickLoc;
+          safeStorage.set(STORAGE_KEYS.ADDRESS, state.address);
+          document.getElementById("currentLocationLabel").textContent = state.address.split(",").pop().trim();
+          closeModal();
+          Anim.showToast("Lokasi pengiriman diperbarui");
+        });
+      });
+    }
+
+    function openQuickDrawerSheet() {
+      const modal = document.getElementById("modalBackdrop");
+      const sheet = document.getElementById("modalSheet");
+      sheet.innerHTML = `
+        <div class="sheet-handle"></div>
+        <div class="modal-header">
+          <h3 class="modal-title">Menu Cepat Bite</h3>
+          <button class="icon-btn" id="btnCloseQuick">✕</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="profile-menu-item" data-qcat="Burger"><span class="profile-menu-left"><span class="profile-menu-icon">🍔</span>Burger Spesial</span><span>→</span></button>
+          <button class="profile-menu-item" data-qcat="Pizza"><span class="profile-menu-left"><span class="profile-menu-icon">🍕</span>Pizza Artisan</span><span>→</span></button>
+          <button class="profile-menu-item" data-qcat="Sushi"><span class="profile-menu-left"><span class="profile-menu-icon">🍣</span>Sushi Segar</span><span>→</span></button>
+          <button class="profile-menu-item" data-qcat="Hot Dog"><span class="profile-menu-left"><span class="profile-menu-icon">🌭</span>Hot Dog Panggang</span><span>→</span></button>
+          <button class="profile-menu-item" data-qcat="Minuman"><span class="profile-menu-left"><span class="profile-menu-icon">🥤</span>Minuman Dingin</span><span>→</span></button>
+        </div>
+      `;
+      modal.classList.add("open");
+      state.activeModal = "quick-menu";
+      document.getElementById("btnCloseQuick").addEventListener("click", closeModal);
+      sheet.querySelectorAll("[data-qcat]").forEach((b) => {
+        b.addEventListener("click", () => {
+          closeModal();
+          selectCategory(b.dataset.qcat);
+        });
+      });
+    }
+
+    function openProfileSubSheet(sectionId) {
+      const modal = document.getElementById("modalBackdrop");
+      const sheet = document.getElementById("modalSheet");
+      let title = "";
+      let body = "";
+
+      if (sectionId === "orders") {
+        title = "Daftar Pesanan";
+        body =
+          state.orders.length === 0
+            ? `<p style="color:var(--color-text-muted);font-size:13.5px;">Belum ada riwayat pesanan. Yuk pesan menu favoritmu!</p>`
+            : state.orders
+                .map(
+                  (o) => `
+                <div class="checkout-block" style="margin:0 0 10px;">
+                  <div class="summary-line"><strong>#${o.id}</strong><span style="color:var(--color-success);font-weight:800;">${o.status}</span></div>
+                  <div class="summary-line"><span>${o.date} • ${o.itemsCount} item</span><strong>${formatRp(o.total)}</strong></div>
+                  <div style="font-size:11.5px;color:var(--color-text-muted);">${o.address}</div>
+                </div>
+              `
+                )
+                .join("");
+      } else if (sectionId === "discounts") {
+        title = "Diskon & Bonus";
+        body = `
+          <div class="checkout-block" style="margin:0 0 10px;background:#FFF7EB;border-color:var(--color-accent);">
+            <div style="font-weight:800;color:var(--color-primary);font-size:15px;">BITE50 — Diskon Kilat 50%</div>
+            <p style="font-size:12.5px;color:#5A3800;margin-top:4px;">Berlaku untuk pesanan Burger, Pizza &amp; Sushi dengan ongkos kirim gratis otomatis.</p>
+          </div>
+          <div class="checkout-block" style="margin:0;">
+            <div style="font-weight:800;font-size:15px;">GRATISONGKIR — Bebas Biaya Kirim</div>
+            <p style="font-size:12.5px;color:var(--color-text-muted);margin-top:4px;">Otomatis aktif di halaman Checkout tanpa minimal transaksi.</p>
+          </div>
+        `;
+      } else if (sectionId === "addresses") {
+        title = "Alamat Saya";
+        body = `
+          <p style="font-size:12.5px;color:var(--color-text-muted);margin-bottom:10px;">Alamat aktif saat ini:</p>
+          <div class="checkout-block" style="margin:0 0 12px;"><strong>${state.address}</strong></div>
+          <button class="btn-primary" id="btnPickAddrFromProfile">Ubah Alamat</button>
+        `;
+      } else if (sectionId === "cards") {
+        title = "Kartu Saya";
+        body = `
+          <div class="checkout-block" style="margin:0;background:linear-gradient(135deg,#242424,#424242);color:#FFF;">
+            <div style="font-size:11px;opacity:0.75;">VISA DEBIT</div>
+            <div style="font-size:17px;font-weight:800;letter-spacing:0.12em;margin:12px 0;">•••• •••• •••• 4829</div>
+            <div style="font-size:12px;opacity:0.9;">${state.user ? state.user.name : "Tamu Bite"} • Aktif untuk Checkout</div>
+          </div>
+        `;
+      } else if (sectionId === "settings") {
+        title = "Pengaturan";
+        body = `
+          <div class="profile-menu-item" style="margin-bottom:10px;">
+            <span style="font-size:14px;font-weight:700;">Kurangi Animasi (Reduced Motion)</span>
+            <input type="checkbox" id="toggleReduceMotion" ${state.reduceMotionManual ? "checked" : ""} style="width:20px;height:20px;accent-color:var(--color-primary);" />
+          </div>
+          <button class="btn-secondary" id="btnResetDemoData" style="color:var(--color-primary);">Reset Data Lokal</button>
+        `;
+      } else {
+        title = "Kontak Bite";
+        body = `
+          <div class="checkout-block" style="margin:0;">
+            <div class="summary-line"><span>Layanan Pelanggan</span><strong>halo@bite.id</strong></div>
+            <div class="summary-line"><span>WhatsApp</span><strong>+62 811-2233-4455</strong></div>
+            <div class="summary-line" style="margin-bottom:0;"><span>Jam Operasional</span><strong>09.00 – 23.00 WIB</strong></div>
+          </div>
+        `;
+      }
+
+      sheet.innerHTML = `
+        <div class="sheet-handle"></div>
+        <div class="modal-header">
+          <h3 class="modal-title">${title}</h3>
+          <button class="icon-btn" id="btnCloseSubSheet">✕</button>
+        </div>
+        ${body}
+      `;
+      modal.classList.add("open");
+      state.activeModal = "profile-sub";
+      document.getElementById("btnCloseSubSheet").addEventListener("click", closeModal);
+
+      const pickAddr = document.getElementById("btnPickAddrFromProfile");
+      if (pickAddr) pickAddr.addEventListener("click", openLocationSheet);
+
+      const toggleRM = document.getElementById("toggleReduceMotion");
+      if (toggleRM) {
+        toggleRM.addEventListener("change", () => {
+          state.reduceMotionManual = toggleRM.checked;
+          safeStorage.set(STORAGE_KEYS.REDUCE_MOTION, state.reduceMotionManual);
+          document.body.classList.toggle("reduce-motion", state.reduceMotionManual);
+          Anim.showToast(state.reduceMotionManual ? "Animasi dikurangi" : "Animasi penuh aktif");
+        });
+      }
+
+      const resetBtn = document.getElementById("btnResetDemoData");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+          state.cart = [];
+          state.favorites = [];
+          state.orders = [];
+          saveCart();
+          saveFavorites();
+          safeStorage.set(STORAGE_KEYS.ORDERS, []);
+          closeModal();
+          renderProfileScreen(false);
+          Anim.showToast("Data lokal telah dibersihkan");
+        });
+      }
+    }
+
+    /* =========================================================================
+       8. INISIALISASI APLIKASI & SPLASH SEQUENCE
+       ========================================================================= */
+    function initApp() {
+      initPromoCarousel();
+      initCategoryChips();
+      renderFoodGrid(false);
+      updateNavBadges();
+      updateBottomNavPill("home");
+
+      document.getElementById("currentLocationLabel").textContent = state.address.split(",").pop().trim();
+
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", () => navigateTo(item.dataset.tab));
+      });
+
+      document.getElementById("btnMenuDrawer").addEventListener("click", openQuickDrawerSheet);
+      document.getElementById("btnLocation").addEventListener("click", openLocationSheet);
+      document.getElementById("modalBackdrop").addEventListener("click", (e) => {
+        if (e.target.id === "modalBackdrop") closeModal();
+      });
+
+      // Urutan animasi Splash -> Beranda
+      const splash = document.getElementById("splashScreen");
+      const header = document.getElementById("homeHeader");
+      const promo = document.getElementById("promoCarousel");
+
+      const enterHome = () => {
+        splash.classList.add("leaving");
+        header.classList.remove("enter-ready");
+        header.classList.add("entered");
+        setTimeout(() => promo.classList.add("entered"), 120);
+        setTimeout(() => (splash.style.display = "none"), 680);
+      };
+
+      const splashDelay = prefersReducedMotion() ? 250 : 1450;
+      setTimeout(enterHome, splashDelay);
+      splash.addEventListener("click", enterHome, { once: true });
+
+      window.addEventListener("resize", () => moveCategoryIndicator());
+    }
+
+    document.addEventListener("DOMContentLoaded", initApp);
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "Bite",
+  "description": "Aplikasi pemesanan makanan cepat saji mobile-first berbahasa Indonesia dalam satu file index.html lengkap dengan login Google/Apple dan animasi 60fps.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
